@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 
 export default function Profile() {
-
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,17 +27,12 @@ export default function Profile() {
   // =====================================================
 
   const fetchProfile = async () => {
-
     try {
-
-      const user = JSON.parse(
-        localStorage.getItem("user")
-      );
+      const user = JSON.parse(localStorage.getItem("user"));
 
       console.log("USER LOGIN:", user);
 
       if (!user || !user.nisn) {
-
         console.error("NISN tidak ditemukan");
 
         setLoading(false);
@@ -46,12 +40,9 @@ export default function Profile() {
         return;
       }
 
-      const response = await fetch(
-        `http://127.0.0.1:8000/student-profile/${user.nisn}`
-      );
+      const response = await fetch(`${API_BASE}/student-profile/${user.nisn}`);
 
       if (!response.ok) {
-
         throw new Error("Gagal mengambil profile");
       }
 
@@ -60,13 +51,9 @@ export default function Profile() {
       console.log("PROFILE:", data);
 
       setProfile(data);
-
     } catch (error) {
-
       console.error(error);
-
     } finally {
-
       setLoading(false);
     }
   };
@@ -76,68 +63,51 @@ export default function Profile() {
   // =====================================================
 
   const handleChangePassword = async () => {
-
     if (!oldPassword || !newPassword || !confirmPassword) {
-
       alert("Semua field password wajib diisi");
 
       return;
     }
 
     if (newPassword !== confirmPassword) {
-
       alert("Konfirmasi password tidak cocok");
 
       return;
     }
 
     if (newPassword.length < 4) {
-
       alert("Password minimal 4 karakter");
 
       return;
     }
 
     try {
-
       setSavingPassword(true);
 
-      const user = JSON.parse(
-        localStorage.getItem("user")
-      );
+      const user = JSON.parse(localStorage.getItem("user"));
 
-      const res = await fetch(
-        "http://localhost:8000/change-password",
-        {
-          method: "POST",
+      const res = await fetch("http://localhost:8000/change-password", {
+        method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-          body: JSON.stringify({
+        body: JSON.stringify({
+          username: user.username,
 
-            username: user.username,
+          old_password: oldPassword,
 
-            old_password: oldPassword,
+          new_password: newPassword,
 
-            new_password: newPassword,
-
-            role: "siswa"
-
-          }),
-
-        }
-      );
+          role: "siswa",
+        }),
+      });
 
       const result = await res.json();
 
       if (!result.success) {
-
-        alert(
-          result.message ||
-          "Gagal mengubah password"
-        );
+        alert(result.message || "Gagal mengubah password");
 
         return;
       }
@@ -149,19 +119,13 @@ export default function Profile() {
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
-
     } catch (error) {
-
       console.error(error);
 
       alert("Terjadi kesalahan");
-
     } finally {
-
       setSavingPassword(false);
-
     }
-
   };
 
   // =====================================================
@@ -169,9 +133,7 @@ export default function Profile() {
   // =====================================================
 
   useEffect(() => {
-
     fetchProfile();
-
   }, []);
 
   // =====================================================
@@ -179,21 +141,16 @@ export default function Profile() {
   // =====================================================
 
   if (loading) {
-
     return (
       <Layout>
         <div className="flex items-center justify-center py-24">
-
           <div className="flex flex-col items-center gap-3">
-
             <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-[#1d2433] animate-spin" />
 
             <p className="text-sm text-gray-400 font-medium">
               Memuat profil...
             </p>
-
           </div>
-
         </div>
       </Layout>
     );
@@ -204,12 +161,9 @@ export default function Profile() {
   // =====================================================
 
   if (!profile) {
-
     return (
       <Layout>
-
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-
           <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center">
             <User size={24} className="text-red-400" />
           </div>
@@ -217,9 +171,7 @@ export default function Profile() {
           <p className="text-sm font-semibold text-red-400">
             Data profile tidak ditemukan
           </p>
-
         </div>
-
       </Layout>
     );
   }
@@ -229,7 +181,6 @@ export default function Profile() {
   // =====================================================
 
   const infoItems = [
-
     {
       icon: CreditCard,
       label: "NIS / NISN",
@@ -285,7 +236,6 @@ export default function Profile() {
       color: "bg-[#e8eaf0]",
       iconColor: "text-[#555b6e]",
     },
-
   ];
 
   // =====================================================
@@ -306,43 +256,31 @@ export default function Profile() {
   // =====================================================
 
   return (
-
     <Layout>
-
       <div className="w-full max-w-5xl mx-auto space-y-6">
-
         {/* PROFILE CARD */}
 
         <div className="bg-white w-full rounded-3xl border border-gray-100 shadow-sm p-5">
-
           <div className="flex items-center gap-5">
-
             {/* AVATAR */}
 
             <div className="w-16 h-16 rounded-2xl bg-[#1d2433] flex items-center justify-center flex-shrink-0 overflow-hidden">
-
               {profile.foto_wajah ? (
-
                 <img
-                  src={`http://127.0.0.1:8000/${profile.foto_wajah}`}
+                  src={`${API_BASE}/${profile.foto_wajah}`}
                   alt="Foto"
                   className="w-full h-full object-cover"
                 />
-
               ) : (
-
                 <span className="text-white text-xl font-black tracking-tight">
                   {initials}
                 </span>
-
               )}
-
             </div>
 
             {/* INFO */}
 
             <div className="flex-1 min-w-0">
-
               <h2 className="text-[18px] font-black text-[#1d2433] truncate">
                 {profile.nama_siswa}
               </h2>
@@ -354,64 +292,47 @@ export default function Profile() {
               <span className="inline-block mt-2 text-[11px] font-bold text-[#2b8a57] bg-[#c7f5d8] px-2.5 py-0.5 rounded-lg">
                 Aktif
               </span>
-
             </div>
-
           </div>
 
           {/* BUTTON */}
 
           <div className="mt-5">
-
             <button
               onClick={() => setShowPasswordModal(true)}
               className="w-full flex items-center justify-center gap-2 bg-[#1d2433] hover:bg-[#2c3547] text-white py-3 rounded-2xl text-sm font-bold transition"
             >
-
               <Pencil size={16} />
-
               Ubah Password
-
             </button>
-
           </div>
-
         </div>
 
         {/* INFO DETAIL */}
 
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5">
-
           <p className="text-[11px] font-black text-gray-300 uppercase tracking-widest mb-4">
             Informasi Detail
           </p>
 
           <div className="space-y-1">
-
             {infoItems.map((item, i) => {
-
               const Icon = item.icon;
 
               return (
-
                 <div key={item.label}>
-
                   <div className="flex items-start gap-3 py-3 px-2 rounded-2xl hover:bg-gray-50 transition-colors">
-
                     <div
                       className={`w-8 h-8 rounded-xl ${item.color} flex items-center justify-center flex-shrink-0 mt-0.5`}
                     >
-
                       <Icon
                         size={14}
                         className={item.iconColor}
                         strokeWidth={2.3}
                       />
-
                     </div>
 
                     <div className="flex-1 min-w-0">
-
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide leading-none">
                         {item.label}
                       </p>
@@ -419,35 +340,24 @@ export default function Profile() {
                       <p className="text-[13px] font-semibold text-[#1d2433] mt-1 break-words leading-snug">
                         {item.value || "—"}
                       </p>
-
                     </div>
-
                   </div>
 
                   {i < infoItems.length - 1 && (
                     <div className="ml-11 border-b border-gray-50" />
                   )}
-
                 </div>
-
               );
-
             })}
-
           </div>
-
         </div>
-
       </div>
 
       {/* MODAL PASSWORD */}
 
       {showPasswordModal && (
-
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-
           <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl">
-
             <h2 className="text-2xl font-black text-[#1d2433] mb-1">
               Ubah Password
             </h2>
@@ -457,9 +367,7 @@ export default function Profile() {
             </p>
 
             <div className="space-y-4">
-
               <div>
-
                 <label className="text-xs font-bold text-gray-400 uppercase">
                   Password Lama
                 </label>
@@ -471,11 +379,9 @@ export default function Profile() {
                   className="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-[#1d2433]"
                   placeholder="Masukkan password lama"
                 />
-
               </div>
 
               <div>
-
                 <label className="text-xs font-bold text-gray-400 uppercase">
                   Password Baru
                 </label>
@@ -487,11 +393,9 @@ export default function Profile() {
                   className="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-[#1d2433]"
                   placeholder="Masukkan password baru"
                 />
-
               </div>
 
               <div>
-
                 <label className="text-xs font-bold text-gray-400 uppercase">
                   Konfirmasi Password
                 </label>
@@ -503,13 +407,10 @@ export default function Profile() {
                   className="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-[#1d2433]"
                   placeholder="Ulangi password baru"
                 />
-
               </div>
-
             </div>
 
             <div className="flex gap-3 mt-7">
-
               <button
                 onClick={() => setShowPasswordModal(false)}
                 className="flex-1 py-3 rounded-2xl bg-gray-100 hover:bg-gray-200 text-sm font-bold text-gray-600 transition"
@@ -524,15 +425,10 @@ export default function Profile() {
               >
                 {savingPassword ? "Menyimpan..." : "Simpan"}
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       )}
-
     </Layout>
   );
 }

@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const STATUS_CONFIG = {
   hadir: {
@@ -95,8 +95,12 @@ export default function HistoryAbsensi() {
     const num = Number(value);
 
     if (!isNaN(num)) {
-      const jam = Math.floor(num / 3600).toString().padStart(2, "0");
-      const menit = Math.floor((num % 3600) / 60).toString().padStart(2, "0");
+      const jam = Math.floor(num / 3600)
+        .toString()
+        .padStart(2, "0");
+      const menit = Math.floor((num % 3600) / 60)
+        .toString()
+        .padStart(2, "0");
 
       return `${jam}:${menit}`;
     }
@@ -169,7 +173,7 @@ export default function HistoryAbsensi() {
       const data = await getAttendanceHistory(
         selectedKelas,
         selectedTanggal,
-        search
+        search,
       );
 
       setHistory(Array.isArray(data) ? data : []);
@@ -190,36 +194,27 @@ export default function HistoryAbsensi() {
   }, [selectedKelas, selectedTanggal, search]);
 
   const filteredHistory = history.filter((item) => {
-
     if (!selectedMonth) return true;
 
-    const bulan = new Date(item.tanggal).toLocaleString(
-      "id-ID",
-      {
-        month: "long",
-      }
-    );
+    const bulan = new Date(item.tanggal).toLocaleString("id-ID", {
+      month: "long",
+    });
 
     return bulan === selectedMonth;
-
   });
 
   // =========================
   // PAGINATION
   // =========================
 
-  const totalPages = Math.ceil(
-    filteredHistory.length / limit
+  const totalPages = Math.ceil(filteredHistory.length / limit);
+
+  const startIndex = (currentPage - 1) * limit;
+
+  const paginatedHistory = filteredHistory.slice(
+    startIndex,
+    startIndex + limit,
   );
-
-  const startIndex =
-    (currentPage - 1) * limit;
-
-  const paginatedHistory =
-    filteredHistory.slice(
-      startIndex,
-      startIndex + limit
-    );
 
   const getDisplayStatus = (item) => {
     const lateMinutes = getLateMinutes(item.jam_masuk);
@@ -267,7 +262,6 @@ export default function HistoryAbsensi() {
         const status = getDisplayStatus(item);
 
         return [
-          
           item.nis,
           item.nama_siswa,
           item.id_kelas,
@@ -291,7 +285,7 @@ export default function HistoryAbsensi() {
       .map((row) =>
         row
           .map((cell) => `"${String(cell ?? "").replaceAll('"', '""')}"`)
-          .join(",")
+          .join(","),
       )
       .join("\n");
 
@@ -311,34 +305,27 @@ export default function HistoryAbsensi() {
   };
 
   const handleExport = () => {
-  const result = history.filter((item) => {
-    const kelasMatch =
-      !exportKelas || item.nama_kelas === exportKelas;
+    const result = history.filter((item) => {
+      const kelasMatch = !exportKelas || item.nama_kelas === exportKelas;
 
-    const statusMatch =
-      exportStatus === "semua" ||
-      item.status_kehadiran === exportStatus;
+      const statusMatch =
+        exportStatus === "semua" || item.status_kehadiran === exportStatus;
 
-    const current = new Date(item.tanggal);
+      const current = new Date(item.tanggal);
 
-    const start = exportStartDate
-      ? new Date(exportStartDate)
-      : null;
+      const start = exportStartDate ? new Date(exportStartDate) : null;
 
-    const end = exportEndDate
-      ? new Date(exportEndDate + "T23:59:59")
-      : null;
+      const end = exportEndDate ? new Date(exportEndDate + "T23:59:59") : null;
 
-    const dateMatch =
-      (!start || current >= start) &&
-      (!end || current <= end);
+      const dateMatch =
+        (!start || current >= start) && (!end || current <= end);
 
-    return kelasMatch && statusMatch && dateMatch;
-  });
+      return kelasMatch && statusMatch && dateMatch;
+    });
 
-  exportCSV(result);
-  setShowExportModal(false);
-};
+    exportCSV(result);
+    setShowExportModal(false);
+  };
 
   return (
     <Layout>
@@ -363,7 +350,9 @@ export default function HistoryAbsensi() {
                 type="text"
                 placeholder="Cari nama atau NIS"
                 value={search}
-                onChange={(e) => {setSearch(e.target.value); setCurrentPage(1);
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
                 }}
                 className="border border-gray-200 rounded-2xl pl-10 pr-4 py-3 text-sm outline-none w-[240px] focus:border-[#3abef8]"
               />
@@ -372,7 +361,9 @@ export default function HistoryAbsensi() {
             <div className="relative">
               <select
                 value={selectedKelas}
-                onChange={(e) => {setSelectedKelas(e.target.value); setCurrentPage(1);
+                onChange={(e) => {
+                  setSelectedKelas(e.target.value);
+                  setCurrentPage(1);
                 }}
                 className="appearance-none border border-gray-200 rounded-2xl px-4 py-3 pr-10 text-sm outline-none min-w-[180px] focus:border-[#3abef8]"
               >
@@ -394,7 +385,9 @@ export default function HistoryAbsensi() {
             <div className="relative">
               <select
                 value={selectedMonth}
-                onChange={(e) => {setSelectedMonth(e.target.value); setCurrentPage(1);
+                onChange={(e) => {
+                  setSelectedMonth(e.target.value);
+                  setCurrentPage(1);
                 }}
                 className="appearance-none border border-gray-200 rounded-2xl px-4 py-3 pr-10 text-sm outline-none min-w-[180px] focus:border-[#3abef8]"
               >
@@ -416,7 +409,9 @@ export default function HistoryAbsensi() {
             <input
               type="date"
               value={selectedTanggal}
-              onChange={(e) => {setSelectedTanggal(e.target.value);setCurrentPage(1);
+              onChange={(e) => {
+                setSelectedTanggal(e.target.value);
+                setCurrentPage(1);
               }}
               className="border border-gray-200 rounded-2xl px-4 py-3 text-sm outline-none focus:border-[#3abef8]"
             />
@@ -426,7 +421,9 @@ export default function HistoryAbsensi() {
             <div className="relative">
               <select
                 value={limit}
-                onChange={(e) => {setLimit(Number(e.target.value)); setCurrentPage(1);
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setCurrentPage(1);
                 }}
                 className="appearance-none border border-gray-200 rounded-2xl px-4 py-3 pr-10 text-sm font-semibold outline-none focus:border-[#3abef8]"
               >
@@ -497,7 +494,9 @@ export default function HistoryAbsensi() {
                       <td className="px-5 py-4 font-bold">{item.nama_siswa}</td>
                       <td className="px-5 py-4">{item.nis}</td>
                       <td className="px-5 py-4">{item.nama_kelas}</td>
-                      <td className="px-5 py-4">{formatTanggal(item.tanggal)}</td>
+                      <td className="px-5 py-4">
+                        {formatTanggal(item.tanggal)}
+                      </td>
 
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
@@ -547,19 +546,19 @@ export default function HistoryAbsensi() {
                           )}
 
                           {item.latitude_keluar && item.longitude_keluar && (
-                              <button
-                                onClick={() =>
-                                  setPreviewMap({
-                                    lat: item.latitude_keluar,
-                                    lng: item.longitude_keluar,
-                                  })
-                                }
-                                className="text-red-500 hover:text-red-700"
-                                title="Lihat lokasi keluar"
-                              >
-                                <MapPin size={16} />
-                              </button>
-                            )}
+                            <button
+                              onClick={() =>
+                                setPreviewMap({
+                                  lat: item.latitude_keluar,
+                                  lng: item.longitude_keluar,
+                                })
+                              }
+                              className="text-red-500 hover:text-red-700"
+                              title="Lihat lokasi keluar"
+                            >
+                              <MapPin size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
 
@@ -579,7 +578,8 @@ export default function HistoryAbsensi() {
             </tbody>
           </table>
           {/* PAGINATION */}
-          <div className="
+          <div
+            className="
             flex
             flex-col
             lg:flex-row
@@ -589,22 +589,17 @@ export default function HistoryAbsensi() {
             p-5
             border-t
             border-gray-100
-          ">
-
+          "
+          >
             <div className="text-sm text-gray-500 font-semibold">
-
               Menampilkan {paginatedHistory.length} dari{" "}
               {filteredHistory.length} data
-
             </div>
 
             <div className="flex items-center gap-2">
-
               <button
                 disabled={currentPage === 1}
-                onClick={() =>
-                  setCurrentPage((prev) => prev - 1)
-                }
+                onClick={() => setCurrentPage((prev) => prev - 1)}
                 className="
                   px-4
                   py-2
@@ -620,7 +615,8 @@ export default function HistoryAbsensi() {
                 Prev
               </button>
 
-              <div className="
+              <div
+                className="
                 px-4
                 py-2
                 rounded-xl
@@ -628,18 +624,14 @@ export default function HistoryAbsensi() {
                 text-white
                 text-sm
                 font-bold
-              ">
+              "
+              >
                 {currentPage} / {totalPages || 1}
               </div>
 
               <button
-                disabled={
-                  currentPage === totalPages ||
-                  totalPages === 0
-                }
-                onClick={() =>
-                  setCurrentPage((prev) => prev + 1)
-                }
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
                 className="
                   px-4
                   py-2
@@ -654,9 +646,7 @@ export default function HistoryAbsensi() {
               >
                 Next
               </button>
-
             </div>
-
           </div>
         </div>
 

@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import Layout from "./Layout";
 
-import {
-  Bell,
-  ChevronDown,
-  CheckCircle,
-  XCircle,
-  Info,
-} from "lucide-react";
+import { Bell, ChevronDown, CheckCircle, XCircle, Info } from "lucide-react";
 
 const BULAN = [
   "Januari",
@@ -25,7 +19,6 @@ const BULAN = [
 ];
 
 export default function Notifications() {
-
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,160 +34,104 @@ export default function Notifications() {
   }, []);
 
   const loadNotifications = async () => {
-
     try {
-
-      const user = JSON.parse(
-        localStorage.getItem("user")
-      );
+      const user = JSON.parse(localStorage.getItem("user"));
 
       if (!user?.nis) {
-
         console.error("NIS tidak ditemukan");
         setLoading(false);
         return;
-
       }
 
-      const response = await fetch(
-        `http://127.0.0.1:8000/notifications/${user.nis}`
-      );
+      const response = await fetch(`${API_BASE}/notifications/${user.nis}`);
 
       const data = await response.json();
 
       const formatted = Array.isArray(data)
         ? data.map((item) => {
-
-            const dateObj = new Date(
-              item.created_at
-            );
+            const dateObj = new Date(item.created_at);
 
             return {
               ...item,
               dateObj,
-              bulanStr:
-                dateObj.toLocaleString(
-                  "id-ID",
-                  {
-                    month: "long",
-                  }
-                ),
+              bulanStr: dateObj.toLocaleString("id-ID", {
+                month: "long",
+              }),
             };
-
           })
         : [];
 
       setNotifications(formatted);
 
       // AUTO READ
-      await fetch(
-        `http://127.0.0.1:8000/notifications/read/${user.nis}`,
-        {
-          method: "POST",
-        }
-      );
-
+      await fetch(`${API_BASE}/notifications/read/${user.nis}`, {
+        method: "POST",
+      });
     } catch (error) {
-
-      console.error(
-        "Gagal mengambil notifikasi:",
-        error
-      );
-
+      console.error("Gagal mengambil notifikasi:", error);
     } finally {
-
       setLoading(false);
-
     }
   };
 
   // FILTER BULAN
-  const filteredNotifications =
-    selectedMonth
-      ? notifications.filter(
-          (item) =>
-            item.bulanStr === selectedMonth
-        )
-      : notifications;
+  const filteredNotifications = selectedMonth
+    ? notifications.filter((item) => item.bulanStr === selectedMonth)
+    : notifications;
 
   // PAGINATION
-  const totalPages = Math.ceil(
-    filteredNotifications.length / limit
+  const totalPages = Math.ceil(filteredNotifications.length / limit);
+
+  const startIndex = (currentPage - 1) * limit;
+
+  const paginatedNotifications = filteredNotifications.slice(
+    startIndex,
+    startIndex + limit,
   );
 
-  const startIndex =
-    (currentPage - 1) * limit;
-
-  const paginatedNotifications =
-    filteredNotifications.slice(
-      startIndex,
-      startIndex + limit
-    );
-
   // SUMMARY
-  const approvedCount =
-    notifications.filter((n) =>
-      String(n.message)
-        .toLowerCase()
-        .includes("disetujui")
-    ).length;
+  const approvedCount = notifications.filter((n) =>
+    String(n.message).toLowerCase().includes("disetujui"),
+  ).length;
 
-  const rejectedCount =
-    notifications.filter((n) =>
-      String(n.message)
-        .toLowerCase()
-        .includes("ditolak")
-    ).length;
+  const rejectedCount = notifications.filter((n) =>
+    String(n.message).toLowerCase().includes("ditolak"),
+  ).length;
 
-  const infoCount =
-    notifications.length -
-    approvedCount -
-    rejectedCount;
+  const infoCount = notifications.length - approvedCount - rejectedCount;
 
   return (
     <Layout>
-
       <div className="w-full max-w-7xl mx-auto">
-
         {/* HEADER */}
         <div className="mb-6">
-
-          <h1 className="text-2xl font-extrabold">
-            Notifikasi
-          </h1>
+          <h1 className="text-2xl font-extrabold">Notifikasi</h1>
 
           <p className="text-sm text-gray-500 mt-1">
-            Riwayat notifikasi izin,
-            absensi dan informasi lainnya
+            Riwayat notifikasi izin, absensi dan informasi lainnya
           </p>
-
         </div>
 
         {/* FILTER */}
-        <div className="
+        <div
+          className="
           flex
           flex-wrap
           items-center
           justify-between
           gap-4
           mb-5
-        ">
-
+        "
+        >
           <div className="flex items-center gap-3">
-
             {/* FILTER BULAN */}
             <div className="relative">
-
               <select
                 value={selectedMonth}
                 onChange={(e) => {
-
-                  setSelectedMonth(
-                    e.target.value
-                  );
+                  setSelectedMonth(e.target.value);
 
                   setCurrentPage(1);
-
                 }}
                 className="
                   appearance-none
@@ -210,20 +147,13 @@ export default function Notifications() {
                   focus:border-[#3abef8]
                 "
               >
-
-                <option value="">
-                  Semua Bulan
-                </option>
+                <option value="">Semua Bulan</option>
 
                 {BULAN.map((bulan) => (
-                  <option
-                    key={bulan}
-                    value={bulan}
-                  >
+                  <option key={bulan} value={bulan}>
                     {bulan}
                   </option>
                 ))}
-
               </select>
 
               <ChevronDown
@@ -237,24 +167,17 @@ export default function Notifications() {
                   pointer-events-none
                 "
               />
-
             </div>
-
           </div>
 
           {/* LIMIT */}
           <div className="relative">
-
             <select
               value={limit}
               onChange={(e) => {
-
-                setLimit(
-                  Number(e.target.value)
-                );
+                setLimit(Number(e.target.value));
 
                 setCurrentPage(1);
-
               }}
               className="
                 appearance-none
@@ -270,23 +193,13 @@ export default function Notifications() {
                 focus:border-[#3abef8]
               "
             >
+              <option value={10}>10 Data</option>
 
-              <option value={10}>
-                10 Data
-              </option>
+              <option value={20}>20 Data</option>
 
-              <option value={20}>
-                20 Data
-              </option>
+              <option value={50}>50 Data</option>
 
-              <option value={50}>
-                50 Data
-              </option>
-
-              <option value={100}>
-                100 Data
-              </option>
-
+              <option value={100}>100 Data</option>
             </select>
 
             <ChevronDown
@@ -300,20 +213,20 @@ export default function Notifications() {
                 pointer-events-none
               "
             />
-
           </div>
-
         </div>
 
         {/* SUMMARY */}
-        <div className="
+        <div
+          className="
           flex
           flex-wrap
           gap-2
           mb-5
-        ">
-
-          <div className="
+        "
+        >
+          <div
+            className="
             bg-green-100
             text-green-700
             px-4
@@ -321,11 +234,13 @@ export default function Notifications() {
             rounded-xl
             text-sm
             font-bold
-          ">
+          "
+          >
             Disetujui: {approvedCount}
           </div>
 
-          <div className="
+          <div
+            className="
             bg-red-100
             text-red-700
             px-4
@@ -333,11 +248,13 @@ export default function Notifications() {
             rounded-xl
             text-sm
             font-bold
-          ">
+          "
+          >
             Ditolak: {rejectedCount}
           </div>
 
-          <div className="
+          <div
+            className="
             bg-blue-100
             text-blue-700
             px-4
@@ -345,34 +262,36 @@ export default function Notifications() {
             rounded-xl
             text-sm
             font-bold
-          ">
+          "
+          >
             Info: {infoCount}
           </div>
-
         </div>
 
         {/* TABLE */}
-        <div className="
+        <div
+          className="
           bg-white
           rounded-3xl
           border
           border-gray-100
           shadow-sm
           overflow-hidden
-        ">
-
+        "
+        >
           {loading ? (
-
-            <div className="
+            <div
+              className="
               py-20
               flex
               flex-col
               items-center
               justify-center
               gap-3
-            ">
-
-              <div className="
+            "
+            >
+              <div
+                className="
                 w-7
                 h-7
                 rounded-full
@@ -380,124 +299,115 @@ export default function Notifications() {
                 border-gray-200
                 border-t-[#1d2433]
                 animate-spin
-              " />
+              "
+              />
 
-              <p className="
+              <p
+                className="
                 text-sm
                 text-gray-400
-              ">
+              "
+              >
                 Memuat notifikasi...
               </p>
-
             </div>
-
           ) : (
             <div className="overflow-x-auto">
-
-              <table className="
+              <table
+                className="
                 w-full
                 min-w-[850px]
                 text-sm
-              ">
-
+              "
+              >
                 <thead className="bg-[#f8f9fa]">
-
-                  <tr className="
+                  <tr
+                    className="
                     border-b
                     border-gray-100
-                  ">
-
-                    <th className="
+                  "
+                  >
+                    <th
+                      className="
                       text-left
                       px-5
                       py-4
-                    ">
+                    "
+                    >
                       Status
                     </th>
 
-                    <th className="
+                    <th
+                      className="
                       text-left
                       px-5
                       py-4
-                    ">
+                    "
+                    >
                       Judul
                     </th>
 
-                    <th className="
+                    <th
+                      className="
                       text-left
                       px-5
                       py-4
-                    ">
+                    "
+                    >
                       Pesan
                     </th>
 
-                    <th className="
+                    <th
+                      className="
                       text-left
                       px-5
                       py-4
-                    ">
+                    "
+                    >
                       Tanggal
                     </th>
-
                   </tr>
-
                 </thead>
 
                 <tbody>
-
                   {paginatedNotifications.length > 0 ? (
+                    paginatedNotifications.map((notif, index) => {
+                      const message = String(notif.message || "").toLowerCase();
 
-                    paginatedNotifications.map(
-                      (notif, index) => {
+                      const isApproved = message.includes("disetujui");
 
-                        const message =
-                          String(
-                            notif.message || ""
-                          ).toLowerCase();
+                      const isRejected = message.includes("ditolak");
 
-                        const isApproved =
-                          message.includes(
-                            "disetujui"
-                          );
+                      const badgeClass = isApproved
+                        ? "bg-green-100 text-green-700"
+                        : isRejected
+                          ? "bg-red-100 text-red-700"
+                          : "bg-blue-100 text-blue-700";
 
-                        const isRejected =
-                          message.includes(
-                            "ditolak"
-                          );
+                      const Icon = isApproved
+                        ? CheckCircle
+                        : isRejected
+                          ? XCircle
+                          : Info;
 
-                        const badgeClass =
-                          isApproved
-                            ? "bg-green-100 text-green-700"
-                            : isRejected
-                            ? "bg-red-100 text-red-700"
-                            : "bg-blue-100 text-blue-700";
-
-                        const Icon =
-                          isApproved
-                            ? CheckCircle
-                            : isRejected
-                            ? XCircle
-                            : Info;
-
-                        return (
-
-                          <tr
-                            key={index}
-                            className="
+                      return (
+                        <tr
+                          key={index}
+                          className="
                               border-b
                               border-gray-100
                               hover:bg-gray-50
                               transition
                             "
-                          >
-
-                            <td className="
+                        >
+                          <td
+                            className="
                               px-5
                               py-4
-                            ">
-
-                              <span
-                                className={`
+                            "
+                          >
+                            <span
+                              className={`
                                   inline-flex
                                   items-center
                                   gap-1.5
@@ -508,60 +418,52 @@ export default function Notifications() {
                                   font-bold
                                   ${badgeClass}
                                 `}
-                              >
+                            >
+                              <Icon size={12} />
 
-                                <Icon size={12} />
-
-                                {isApproved
-                                  ? "Disetujui"
-                                  : isRejected
+                              {isApproved
+                                ? "Disetujui"
+                                : isRejected
                                   ? "Ditolak"
                                   : "Info"}
+                            </span>
+                          </td>
 
-                              </span>
-
-                            </td>
-
-                            <td className="
+                          <td
+                            className="
                               px-5
                               py-4
                               font-bold
-                            ">
-                              {notif.title}
-                            </td>
+                            "
+                          >
+                            {notif.title}
+                          </td>
 
-                            <td className="
+                          <td
+                            className="
                               px-5
                               py-4
                               text-gray-600
-                            ">
-                              {notif.message}
-                            </td>
+                            "
+                          >
+                            {notif.message}
+                          </td>
 
-                            <td className="
+                          <td
+                            className="
                               px-5
                               py-4
                               whitespace-nowrap
                               text-gray-500
-                            ">
-
-                              {notif.created_at
-                                ?.replace("T", " ")
-                                ?.slice(0, 16)}
-
-                            </td>
-
-                          </tr>
-
-                        );
-
-                      }
-                    )
-
+                            "
+                          >
+                            {notif.created_at?.replace("T", " ")?.slice(0, 16)}
+                          </td>
+                        </tr>
+                      );
+                    })
                   ) : (
-
                     <tr>
-
                       <td
                         colSpan="4"
                         className="
@@ -572,17 +474,14 @@ export default function Notifications() {
                       >
                         Tidak ada notifikasi
                       </td>
-
                     </tr>
-
                   )}
-
                 </tbody>
-
               </table>
 
               {/* PAGINATION */}
-              <div className="
+              <div
+                className="
                 flex
                 flex-col
                 lg:flex-row
@@ -592,35 +491,29 @@ export default function Notifications() {
                 p-5
                 border-t
                 border-gray-100
-              ">
-
-                <div className="
+              "
+              >
+                <div
+                  className="
                   text-sm
                   text-gray-500
                   font-semibold
-                ">
-
-                  Menampilkan{" "}
-                  {paginatedNotifications.length}
-                  {" "}dari{" "}
-                  {filteredNotifications.length}
-                  {" "}data
-
+                "
+                >
+                  Menampilkan {paginatedNotifications.length} dari{" "}
+                  {filteredNotifications.length} data
                 </div>
 
-                <div className="
+                <div
+                  className="
                   flex
                   items-center
                   gap-2
-                ">
-
+                "
+                >
                   <button
                     disabled={currentPage === 1}
-                    onClick={() =>
-                      setCurrentPage(
-                        (prev) => prev - 1
-                      )
-                    }
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
                     className="
                       px-4
                       py-2
@@ -636,7 +529,8 @@ export default function Notifications() {
                     Prev
                   </button>
 
-                  <div className="
+                  <div
+                    className="
                     px-4
                     py-2
                     rounded-xl
@@ -644,22 +538,14 @@ export default function Notifications() {
                     text-white
                     text-sm
                     font-bold
-                  ">
-
+                  "
+                  >
                     {currentPage} / {totalPages || 1}
-
                   </div>
 
                   <button
-                    disabled={
-                      currentPage === totalPages ||
-                      totalPages === 0
-                    }
-                    onClick={() =>
-                      setCurrentPage(
-                        (prev) => prev + 1
-                      )
-                    }
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
                     className="
                       px-4
                       py-2
@@ -674,18 +560,12 @@ export default function Notifications() {
                   >
                     Next
                   </button>
-
                 </div>
-
               </div>
-
             </div>
           )}
-
         </div>
-
       </div>
-
     </Layout>
   );
 }

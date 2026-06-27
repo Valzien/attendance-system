@@ -13,7 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function DataPengajuan() {
   const [search, setSearch] = useState("");
@@ -69,18 +69,14 @@ export default function DataPengajuan() {
     });
   }, [search, izinData]);
 
-  const totalPages = Math.ceil(
-  filteredStudents.length / itemsPerPage
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+
+  const paginatedStudents = filteredStudents.slice(
+    startIndex,
+    startIndex + itemsPerPage,
   );
-
-  const startIndex =
-    (currentPage - 1) * itemsPerPage;
-
-  const paginatedStudents =
-    filteredStudents.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
 
   const getLampiranUrl = (lampiran) => {
     if (!lampiran) {
@@ -98,10 +94,7 @@ export default function DataPengajuan() {
     if (!selectedStudent) return;
 
     // VALIDASI KETERANGAN PENOLAKAN
-    if (
-      status === "ditolak" &&
-      keteranganPenolakan.trim() === ""
-    ) {
+    if (status === "ditolak" && keteranganPenolakan.trim() === "") {
       alert("Keterangan penolakan wajib diisi.");
       return;
     }
@@ -111,17 +104,14 @@ export default function DataPengajuan() {
         nis: selectedStudent.nis,
         tanggal: selectedStudent.tanggal,
         status,
-        keterangan:
-          status === "ditolak"
-            ? keteranganPenolakan
-            : "",
+        keterangan: status === "ditolak" ? keteranganPenolakan : "",
       });
 
       const res = await fetch(
         `${API_URL}/izin/update-status?${params.toString()}`,
         {
           method: "POST",
-        }
+        },
       );
 
       const result = await res.json();
@@ -274,7 +264,7 @@ export default function DataPengajuan() {
                           <td className="px-6 py-5">
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-black ${statusColor(
-                                student.status
+                                student.status,
                               )}`}
                             >
                               {student.status || "pending"}
@@ -287,7 +277,7 @@ export default function DataPengajuan() {
                                 onClick={() => {
                                   setSelectedStudent(student);
                                   setKeteranganPenolakan(
-                                    student.keterangan_penolakan || ""
+                                    student.keterangan_penolakan || "",
                                   );
                                 }}
                                 className="flex items-center gap-2 bg-[#1d2433] hover:bg-[#2d3748] text-white px-4 py-2 rounded-xl text-sm font-bold transition"
@@ -304,10 +294,8 @@ export default function DataPengajuan() {
                 </table>
                 {/* PAGINATION */}
                 <div className="flex flex-col lg:flex-row items-center justify-between gap-4 p-5 border-t border-gray-100">
-
                   {/* SHOW DATA */}
                   <div className="flex items-center gap-2 text-sm text-gray-500 font-semibold">
-
                     <span>Tampilkan</span>
 
                     <select
@@ -333,17 +321,13 @@ export default function DataPengajuan() {
                     </select>
 
                     <span>data</span>
-
                   </div>
 
                   {/* BUTTON PAGE */}
                   <div className="flex items-center gap-2">
-
                     <button
                       disabled={currentPage === 1}
-                      onClick={() =>
-                        setCurrentPage((prev) => prev - 1)
-                      }
+                      onClick={() => setCurrentPage((prev) => prev - 1)}
                       className="
                         px-4
                         py-2
@@ -359,7 +343,8 @@ export default function DataPengajuan() {
                       Prev
                     </button>
 
-                    <div className="
+                    <div
+                      className="
                       px-4
                       py-2
                       rounded-xl
@@ -367,15 +352,14 @@ export default function DataPengajuan() {
                       text-white
                       text-sm
                       font-bold
-                    ">
+                    "
+                    >
                       {currentPage} / {totalPages || 1}
                     </div>
 
                     <button
                       disabled={currentPage === totalPages}
-                      onClick={() =>
-                        setCurrentPage((prev) => prev + 1)
-                      }
+                      onClick={() => setCurrentPage((prev) => prev + 1)}
                       className="
                         px-4
                         py-2
@@ -390,12 +374,8 @@ export default function DataPengajuan() {
                     >
                       Next
                     </button>
-
                   </div>
-
                 </div>
-
-                
               </div>
             </div>
           </>
@@ -437,9 +417,7 @@ export default function DataPengajuan() {
                   <div className="bg-[#f8fafc] rounded-2xl p-5">
                     <div className="flex items-center gap-2 mb-2 text-gray-400">
                       <User size={16} />
-                      <span className="text-xs font-bold uppercase">
-                        NIS
-                      </span>
+                      <span className="text-xs font-bold uppercase">NIS</span>
                     </div>
 
                     <p className="text-sm font-black text-[#1d2433]">
@@ -450,9 +428,7 @@ export default function DataPengajuan() {
                   <div className="bg-[#f8fafc] rounded-2xl p-5">
                     <div className="flex items-center gap-2 mb-2 text-gray-400">
                       <School size={16} />
-                      <span className="text-xs font-bold uppercase">
-                        Kelas
-                      </span>
+                      <span className="text-xs font-bold uppercase">Kelas</span>
                     </div>
 
                     <p className="text-sm font-black text-[#1d2433]">
@@ -483,7 +459,7 @@ export default function DataPengajuan() {
 
                     <span
                       className={`inline-flex px-3 py-1 rounded-full text-xs font-black ${statusColor(
-                        selectedStudent.status
+                        selectedStudent.status,
                       )}`}
                     >
                       {selectedStudent.status}
@@ -513,9 +489,7 @@ export default function DataPengajuan() {
 
                     <textarea
                       value={keteranganPenolakan}
-                      onChange={(e) =>
-                        setKeteranganPenolakan(e.target.value)
-                      }
+                      onChange={(e) => setKeteranganPenolakan(e.target.value)}
                       disabled={selectedStudent.status !== "pending"}
                       placeholder="Tulis alasan kenapa pengajuan ditolak..."
                       className="w-full min-h-[130px] rounded-2xl border border-gray-200 bg-[#f8fafc] p-5 text-sm text-gray-700 outline-none focus:border-red-300 resize-none disabled:opacity-70"

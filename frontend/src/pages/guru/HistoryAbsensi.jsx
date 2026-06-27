@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const STATUS_CONFIG = {
   hadir: {
@@ -175,7 +175,7 @@ export default function HistoryAbsensi() {
       const data = await getAttendanceHistory(
         selectedKelas,
         selectedTanggal,
-        search
+        search,
       );
 
       setHistory(Array.isArray(data) ? data : []);
@@ -216,7 +216,7 @@ export default function HistoryAbsensi() {
 
   const paginatedHistory = filteredHistory.slice(
     startIndex,
-    startIndex + limit
+    startIndex + limit,
   );
 
   const getDisplayStatus = (item) => {
@@ -224,8 +224,7 @@ export default function HistoryAbsensi() {
 
     if (
       lateMinutes > 0 &&
-      (item.status_kehadiran === "hadir" ||
-        item.status_kehadiran === "telat")
+      (item.status_kehadiran === "hadir" || item.status_kehadiran === "telat")
     ) {
       return {
         key: "terlambat",
@@ -276,10 +275,8 @@ export default function HistoryAbsensi() {
     const csvContent = rows
       .map((row) =>
         row
-          .map((cell) =>
-            `"${String(cell ?? "").replaceAll('"', '""')}"`
-          )
-          .join(",")
+          .map((cell) => `"${String(cell ?? "").replaceAll('"', '""')}"`)
+          .join(","),
       )
       .join("\n");
 
@@ -317,17 +314,12 @@ export default function HistoryAbsensi() {
 
       const current = new Date(item.tanggal);
 
-      const start = exportStartDate
-        ? new Date(exportStartDate)
-        : null;
+      const start = exportStartDate ? new Date(exportStartDate) : null;
 
-      const end = exportEndDate
-        ? new Date(exportEndDate)
-        : null;
+      const end = exportEndDate ? new Date(exportEndDate) : null;
 
       const dateMatch =
-        (!start || current >= start) &&
-        (!end || current <= end);
+        (!start || current >= start) && (!end || current <= end);
 
       return kelasMatch && statusMatch && dateMatch;
     });
@@ -341,9 +333,7 @@ export default function HistoryAbsensi() {
     <Layout>
       <div className="w-full px-4 mt-4 pb-20">
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold">
-            History Absensi Siswa
-          </h1>
+          <h1 className="text-2xl font-extrabold">History Absensi Siswa</h1>
 
           <p className="text-gray-500 text-sm mt-1">
             Riwayat lengkap absensi masuk & keluar siswa
@@ -376,10 +366,7 @@ export default function HistoryAbsensi() {
                 <option value="">Semua Kelas</option>
 
                 {kelasList.map((kelas) => (
-                  <option
-                    key={kelas.id}
-                    value={kelas.nama_kelas}
-                  >
+                  <option key={kelas.id} value={kelas.nama_kelas}>
                     {kelas.nama_kelas}
                   </option>
                 ))}
@@ -471,18 +458,13 @@ export default function HistoryAbsensi() {
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-7 h-7 rounded-full border-[3px] border-gray-200 border-t-[#1d2433] animate-spin" />
 
-                      <p className="text-sm text-gray-400">
-                        Memuat data...
-                      </p>
+                      <p className="text-sm text-gray-400">Memuat data...</p>
                     </div>
                   </td>
                 </tr>
               ) : filteredHistory.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan="8"
-                    className="py-16 text-center text-gray-400"
-                  >
+                  <td colSpan="8" className="py-16 text-center text-gray-400">
                     Tidak ada history absensi
                   </td>
                 </tr>
@@ -497,13 +479,9 @@ export default function HistoryAbsensi() {
                       key={index}
                       className="border-b border-gray-100 hover:bg-gray-50 transition"
                     >
-                      <td className="px-5 py-4 font-bold">
-                        {item.nama_siswa}
-                      </td>
+                      <td className="px-5 py-4 font-bold">{item.nama_siswa}</td>
 
-                      <td className="px-5 py-4">
-                        {item.nis}
-                      </td>
+                      <td className="px-5 py-4">{item.nis}</td>
 
                       <td className="px-5 py-4">
                         {item.nama_kelas || item.id_kelas}
@@ -515,79 +493,63 @@ export default function HistoryAbsensi() {
 
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
-                          <Clock
-                            size={13}
-                            className="text-gray-400"
-                          />
+                          <Clock size={13} className="text-gray-400" />
 
-                          <span>
-                            {formatJam(item.jam_masuk)}
-                          </span>
+                          <span>{formatJam(item.jam_masuk)}</span>
 
                           {item.foto_masuk && (
                             <button
-                              onClick={() =>
-                                setPreviewPhoto(item.foto_masuk)
-                              }
+                              onClick={() => setPreviewPhoto(item.foto_masuk)}
                               className="text-blue-500 hover:text-blue-700"
                             >
                               <Eye size={16} />
                             </button>
                           )}
 
-                          {item.latitude_masuk &&
-                            item.longitude_masuk && (
-                              <button
-                                onClick={() =>
-                                  setPreviewMap({
-                                    lat: item.latitude_masuk,
-                                    lng: item.longitude_masuk,
-                                  })
-                                }
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <MapPin size={16} />
-                              </button>
-                            )}
+                          {item.latitude_masuk && item.longitude_masuk && (
+                            <button
+                              onClick={() =>
+                                setPreviewMap({
+                                  lat: item.latitude_masuk,
+                                  lng: item.longitude_masuk,
+                                })
+                              }
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <MapPin size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
 
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
-                          <Clock
-                            size={13}
-                            className="text-gray-400"
-                          />
+                          <Clock size={13} className="text-gray-400" />
 
-                          <span>
-                            {formatJam(item.jam_keluar)}
-                          </span>
+                          <span>{formatJam(item.jam_keluar)}</span>
 
                           {item.foto_keluar && (
                             <button
-                              onClick={() =>
-                                setPreviewPhoto(item.foto_keluar)
-                              }
+                              onClick={() => setPreviewPhoto(item.foto_keluar)}
                               className="text-blue-500 hover:text-blue-700"
                             >
                               <Eye size={16} />
                             </button>
                           )}
 
-                          {item.latitude_keluar &&
-                            item.longitude_keluar && (
-                              <button
-                                onClick={() =>
-                                  setPreviewMap({
-                                    lat: item.latitude_keluar,
-                                    lng: item.longitude_keluar,
-                                  })
-                                }
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <MapPin size={16} />
-                              </button>
-                            )}
+                          {item.latitude_keluar && item.longitude_keluar && (
+                            <button
+                              onClick={() =>
+                                setPreviewMap({
+                                  lat: item.latitude_keluar,
+                                  lng: item.longitude_keluar,
+                                })
+                              }
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <MapPin size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
 
@@ -599,9 +561,7 @@ export default function HistoryAbsensi() {
                         </span>
                       </td>
 
-                      <td className="px-5 py-4">
-                        {item.keterangan || "-"}
-                      </td>
+                      <td className="px-5 py-4">{item.keterangan || "-"}</td>
                     </tr>
                   );
                 })
@@ -618,9 +578,7 @@ export default function HistoryAbsensi() {
             <div className="flex items-center gap-2">
               <button
                 disabled={currentPage === 1}
-                onClick={() =>
-                  setCurrentPage((prev) => prev - 1)
-                }
+                onClick={() => setCurrentPage((prev) => prev - 1)}
                 className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-[13px] font-bold disabled:opacity-40"
               >
                 Prev
@@ -631,13 +589,8 @@ export default function HistoryAbsensi() {
               </div>
 
               <button
-                disabled={
-                  currentPage === totalPages ||
-                  totalPages === 0
-                }
-                onClick={() =>
-                  setCurrentPage((prev) => prev + 1)
-                }
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
                 className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-[13px] font-bold disabled:opacity-40"
               >
                 Next
@@ -662,8 +615,7 @@ export default function HistoryAbsensi() {
               </h2>
 
               <p className="text-sm text-gray-500 mb-6">
-                Pilih filter data sebelum mengunduh
-                rekap absensi.
+                Pilih filter data sebelum mengunduh rekap absensi.
               </p>
 
               <div className="grid grid-cols-1 gap-4">
@@ -674,18 +626,13 @@ export default function HistoryAbsensi() {
 
                   <select
                     value={exportKelas}
-                    onChange={(e) =>
-                      setExportKelas(e.target.value)
-                    }
+                    onChange={(e) => setExportKelas(e.target.value)}
                     className="mt-2 w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm outline-none"
                   >
                     <option value="">Semua Kelas</option>
 
                     {kelasList.map((kelas) => (
-                      <option
-                        key={kelas.id}
-                        value={kelas.nama_kelas}
-                      >
+                      <option key={kelas.id} value={kelas.nama_kelas}>
                         {kelas.nama_kelas}
                       </option>
                     ))}
@@ -700,9 +647,7 @@ export default function HistoryAbsensi() {
                   <input
                     type="date"
                     value={exportStartDate}
-                    onChange={(e) =>
-                      setExportStartDate(e.target.value)
-                    }
+                    onChange={(e) => setExportStartDate(e.target.value)}
                     className="mt-2 w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm outline-none"
                   />
                 </div>
@@ -715,9 +660,7 @@ export default function HistoryAbsensi() {
                   <input
                     type="date"
                     value={exportEndDate}
-                    onChange={(e) =>
-                      setExportEndDate(e.target.value)
-                    }
+                    onChange={(e) => setExportEndDate(e.target.value)}
                     className="mt-2 w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm outline-none"
                   />
                 </div>
@@ -729,18 +672,14 @@ export default function HistoryAbsensi() {
 
                   <select
                     value={exportStatus}
-                    onChange={(e) =>
-                      setExportStatus(e.target.value)
-                    }
+                    onChange={(e) => setExportStatus(e.target.value)}
                     className="mt-2 w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm outline-none"
                   >
                     <option value="semua">Semua</option>
                     <option value="hadir">Hadir</option>
                     <option value="izin">Izin</option>
                     <option value="sakit">Sakit</option>
-                    <option value="alfa">
-                      Tidak Hadir
-                    </option>
+                    <option value="alfa">Tidak Hadir</option>
                   </select>
                 </div>
               </div>

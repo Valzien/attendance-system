@@ -38,27 +38,17 @@ export default function Notifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:8000/permission-forms"
-        );
+        const res = await fetch("http://localhost:8000/permission-forms");
 
         const data = await res.json();
 
-        setNotifications(
-          Array.isArray(data) ? data : []
-        );
+        setNotifications(Array.isArray(data) ? data : []);
 
-        await fetch(
-          "http://127.0.0.1:8000/guru/notifications/read",
-          {
-            method: "POST",
-          }
-        );
+        await fetch(`${API_BASE}/guru/notifications/read`, {
+          method: "POST",
+        });
       } catch (err) {
-        console.log(
-          "Gagal mengambil notifikasi:",
-          err
-        );
+        console.log("Gagal mengambil notifikasi:", err);
 
         setNotifications([]);
       } finally {
@@ -73,45 +63,35 @@ export default function Notifications() {
   // FILTER BULAN
   // =========================================
 
-  const filteredNotifications =
-    notifications.filter((item) => {
-      if (!selectedMonth) return true;
+  const filteredNotifications = notifications.filter((item) => {
+    if (!selectedMonth) return true;
 
-      const bulan = new Date(
-        item.tanggal
-      ).toLocaleString("id-ID", {
-        month: "long",
-      });
-
-      return bulan === selectedMonth;
+    const bulan = new Date(item.tanggal).toLocaleString("id-ID", {
+      month: "long",
     });
+
+    return bulan === selectedMonth;
+  });
 
   // =========================================
   // PAGINATION
   // =========================================
 
-  const totalPages = Math.ceil(
-    filteredNotifications.length /
-      itemsPerPage
+  const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+
+  const paginatedNotifications = filteredNotifications.slice(
+    startIndex,
+    startIndex + itemsPerPage,
   );
-
-  const startIndex =
-    (currentPage - 1) * itemsPerPage;
-
-  const paginatedNotifications =
-    filteredNotifications.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
 
   return (
     <Layout>
       <div className="w-full max-w-5xl mx-auto">
         {/* HEADER */}
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold">
-            Notifikasi
-          </h1>
+          <h1 className="text-2xl font-extrabold">Notifikasi</h1>
 
           <p className="text-sm text-gray-500 mt-1">
             Riwayat notifikasi pengajuan izin siswa
@@ -120,9 +100,7 @@ export default function Notifications() {
 
         {/* LOADING */}
         {loading ? (
-          <div className="text-center py-10 font-bold">
-            Memuat...
-          </div>
+          <div className="text-center py-10 font-bold">Memuat...</div>
         ) : notifications.length === 0 ? (
           <div className="text-center py-10 text-gray-400 font-bold">
             Tidak ada notifikasi
@@ -137,9 +115,7 @@ export default function Notifications() {
                   <select
                     value={selectedMonth}
                     onChange={(e) => {
-                      setSelectedMonth(
-                        e.target.value
-                      );
+                      setSelectedMonth(e.target.value);
 
                       setCurrentPage(1);
                     }}
@@ -157,15 +133,10 @@ export default function Notifications() {
                       focus:border-[#3abef8]
                     "
                   >
-                    <option value="">
-                      Semua Bulan
-                    </option>
+                    <option value="">Semua Bulan</option>
 
                     {BULAN.map((bulan) => (
-                      <option
-                        key={bulan}
-                        value={bulan}
-                      >
+                      <option key={bulan} value={bulan}>
                         {bulan}
                       </option>
                     ))}
@@ -190,9 +161,7 @@ export default function Notifications() {
                 <select
                   value={itemsPerPage}
                   onChange={(e) => {
-                    setItemsPerPage(
-                      Number(e.target.value)
-                    );
+                    setItemsPerPage(Number(e.target.value));
 
                     setCurrentPage(1);
                   }}
@@ -210,21 +179,13 @@ export default function Notifications() {
                     focus:border-[#3abef8]
                   "
                 >
-                  <option value={10}>
-                    10 Data
-                  </option>
+                  <option value={10}>10 Data</option>
 
-                  <option value={25}>
-                    25 Data
-                  </option>
+                  <option value={25}>25 Data</option>
 
-                  <option value={50}>
-                    50 Data
-                  </option>
+                  <option value={50}>50 Data</option>
 
-                  <option value={100}>
-                    100 Data
-                  </option>
+                  <option value={100}>100 Data</option>
                 </select>
 
                 <ChevronDown
@@ -273,79 +234,58 @@ export default function Notifications() {
                 </thead>
 
                 <tbody>
-                  {paginatedNotifications.map(
-                    (item, index) => {
-                      const isApproved =
-                        item.status ===
-                        "disetujui";
+                  {paginatedNotifications.map((item, index) => {
+                    const isApproved = item.status === "disetujui";
 
-                      const isRejected =
-                        item.status ===
-                        "ditolak";
+                    const isRejected = item.status === "ditolak";
 
-                      let IconComponent =
-                        Bell;
+                    let IconComponent = Bell;
 
-                      let iconBg =
-                        "bg-yellow-100";
+                    let iconBg = "bg-yellow-100";
 
-                      let iconColor =
-                        "text-yellow-600";
+                    let iconColor = "text-yellow-600";
 
-                      if (isApproved) {
-                        IconComponent =
-                          CheckCircle2;
+                    if (isApproved) {
+                      IconComponent = CheckCircle2;
 
-                        iconBg =
-                          "bg-green-100";
+                      iconBg = "bg-green-100";
 
-                        iconColor =
-                          "text-green-600";
-                      }
+                      iconColor = "text-green-600";
+                    }
 
-                      if (isRejected) {
-                        IconComponent =
-                          XCircle;
+                    if (isRejected) {
+                      IconComponent = XCircle;
 
-                        iconBg =
-                          "bg-red-100";
+                      iconBg = "bg-red-100";
 
-                        iconColor =
-                          "text-red-600";
-                      }
+                      iconColor = "text-red-600";
+                    }
 
-                      let notifTitle =
-                        "Pengajuan izin baru";
+                    let notifTitle = "Pengajuan izin baru";
 
-                      if (isApproved)
-                        notifTitle =
-                          "Disetujui";
+                    if (isApproved) notifTitle = "Disetujui";
 
-                      if (isRejected)
-                        notifTitle =
-                          "Ditolak";
+                    if (isRejected) notifTitle = "Ditolak";
 
-                      return (
-                        <tr
-                          key={index}
-                          className="
+                    return (
+                      <tr
+                        key={index}
+                        className="
                             border-b
                             border-gray-50
                             last:border-0
                             hover:bg-gray-50
                             transition
                           "
-                        >
-                          <td className="px-5 py-4 text-gray-400">
-                            {startIndex +
-                              index +
-                              1}
-                          </td>
+                      >
+                        <td className="px-5 py-4 text-gray-400">
+                          {startIndex + index + 1}
+                        </td>
 
-                          <td className="px-5 py-4">
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={`
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`
                                   w-8
                                   h-8
                                   rounded-full
@@ -355,17 +295,12 @@ export default function Notifications() {
                                   justify-center
                                   shrink-0
                                 `}
-                              >
-                                <IconComponent
-                                  size={16}
-                                  className={
-                                    iconColor
-                                  }
-                                />
-                              </div>
+                            >
+                              <IconComponent size={16} className={iconColor} />
+                            </div>
 
-                              <span
-                                className={`
+                            <span
+                              className={`
                                   text-xs
                                   font-bold
                                   px-2.5
@@ -375,43 +310,38 @@ export default function Notifications() {
                                     isApproved
                                       ? "bg-[#eaf8ed] text-[#2a8742]"
                                       : isRejected
-                                      ? "bg-[#fee2e2] text-[#b91c1c]"
-                                      : "bg-yellow-50 text-yellow-700"
+                                        ? "bg-[#fee2e2] text-[#b91c1c]"
+                                        : "bg-yellow-50 text-yellow-700"
                                   }
                                 `}
-                              >
-                                {notifTitle}
-                              </span>
-                            </div>
-                          </td>
+                            >
+                              {notifTitle}
+                            </span>
+                          </div>
+                        </td>
 
-                          <td className="px-5 py-4 font-medium text-gray-700">
-                            {item.nama_siswa}
-                          </td>
+                        <td className="px-5 py-4 font-medium text-gray-700">
+                          {item.nama_siswa}
+                        </td>
 
-                          <td className="px-5 py-4 text-gray-500">
-                            {item.alasan ||
-                              "-"}
-                          </td>
+                        <td className="px-5 py-4 text-gray-500">
+                          {item.alasan || "-"}
+                        </td>
 
-                          <td className="px-5 py-4 text-gray-500">
-                            {item.keterangan ||
-                              "-"}
-                          </td>
+                        <td className="px-5 py-4 text-gray-500">
+                          {item.keterangan || "-"}
+                        </td>
 
-                          <td className="px-5 py-4">
-                            <div className="flex items-center gap-1.5 text-gray-400 whitespace-nowrap">
-                              <CalendarDays
-                                size={13}
-                              />
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-1.5 text-gray-400 whitespace-nowrap">
+                            <CalendarDays size={13} />
 
-                              {item.tanggal}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
+                            {item.tanggal}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
 
@@ -436,27 +366,14 @@ export default function Notifications() {
                     text-gray-500
                   "
                 >
-                  Menampilkan{" "}
-                  {
-                    paginatedNotifications.length
-                  }{" "}
-                  dari{" "}
-                  {
-                    filteredNotifications.length
-                  }{" "}
-                  data
+                  Menampilkan {paginatedNotifications.length} dari{" "}
+                  {filteredNotifications.length} data
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button
-                    disabled={
-                      currentPage === 1
-                    }
-                    onClick={() =>
-                      setCurrentPage(
-                        (prev) => prev - 1
-                      )
-                    }
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
                     className="
                       px-4
                       py-2
@@ -483,21 +400,12 @@ export default function Notifications() {
                       font-bold
                     "
                   >
-                    {currentPage} /{" "}
-                    {totalPages || 1}
+                    {currentPage} / {totalPages || 1}
                   </div>
 
                   <button
-                    disabled={
-                      currentPage ===
-                        totalPages ||
-                      totalPages === 0
-                    }
-                    onClick={() =>
-                      setCurrentPage(
-                        (prev) => prev + 1
-                      )
-                    }
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
                     className="
                       px-4
                       py-2

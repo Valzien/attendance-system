@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import Layout from "./Layout";
-import {
-  Bell,
-  CalendarDays,
-  ChevronDown,
-} from "lucide-react";
+import { Bell, CalendarDays, ChevronDown } from "lucide-react";
 
 const BULAN = [
   "Januari",
@@ -38,9 +34,7 @@ export default function Notifications() {
 
   const fetchNotifications = async () => {
     try {
-      const res = await fetch(
-        "http://127.0.0.1:8000/admin/notifications"
-      );
+      const res = await fetch(`${API_BASE}/admin/notifications`);
 
       const data = await res.json();
 
@@ -59,53 +53,36 @@ export default function Notifications() {
         : [];
 
       setNotifications(formatted);
-
     } catch (err) {
-
-      console.log(
-        "Gagal mengambil notifikasi admin:",
-        err
-      );
+      console.log("Gagal mengambil notifikasi admin:", err);
 
       setNotifications([]);
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
   // FILTER BULAN
   const filteredNotifications = selectedMonth
-    ? notifications.filter(
-        (item) => item.bulanStr === selectedMonth
-      )
+    ? notifications.filter((item) => item.bulanStr === selectedMonth)
     : notifications;
 
   // PAGINATION
-  const totalPages = Math.ceil(
-    filteredNotifications.length / itemsPerPage
+  const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+
+  const paginatedNotifications = filteredNotifications.slice(
+    startIndex,
+    startIndex + itemsPerPage,
   );
-
-  const startIndex =
-    (currentPage - 1) * itemsPerPage;
-
-  const paginatedNotifications =
-    filteredNotifications.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
 
   return (
     <Layout>
       <div className="w-full max-w-6xl mx-auto">
-
         {/* HEADER */}
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold">
-            Notifikasi
-          </h1>
+          <h1 className="text-2xl font-extrabold">Notifikasi</h1>
 
           <p className="text-sm text-gray-500 mt-1">
             Riwayat notifikasi pengajuan izin siswa
@@ -114,9 +91,7 @@ export default function Notifications() {
 
         {/* FILTER + LIMIT */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-
           <div className="flex flex-wrap items-center gap-3">
-
             {/* FILTER BULAN */}
             <div className="relative">
               <select
@@ -141,15 +116,10 @@ export default function Notifications() {
                   focus:border-[#3abef8]
                 "
               >
-                <option value="">
-                  Semua Bulan
-                </option>
+                <option value="">Semua Bulan</option>
 
                 {BULAN.map((bulan) => (
-                  <option
-                    key={bulan}
-                    value={bulan}
-                  >
+                  <option key={bulan} value={bulan}>
                     {bulan}
                   </option>
                 ))}
@@ -167,18 +137,14 @@ export default function Notifications() {
                 "
               />
             </div>
-
           </div>
 
           {/* LIMIT */}
           <div className="relative">
-
             <select
               value={itemsPerPage}
               onChange={(e) => {
-                setItemsPerPage(
-                  Number(e.target.value)
-                );
+                setItemsPerPage(Number(e.target.value));
 
                 setCurrentPage(1);
               }}
@@ -197,23 +163,13 @@ export default function Notifications() {
                 focus:border-[#3abef8]
               "
             >
+              <option value={10}>10 Data</option>
 
-              <option value={10}>
-                10 Data
-              </option>
+              <option value={25}>25 Data</option>
 
-              <option value={25}>
-                25 Data
-              </option>
+              <option value={50}>50 Data</option>
 
-              <option value={50}>
-                50 Data
-              </option>
-
-              <option value={100}>
-                100 Data
-              </option>
-
+              <option value={100}>100 Data</option>
             </select>
 
             <ChevronDown
@@ -227,32 +183,33 @@ export default function Notifications() {
                 pointer-events-none
               "
             />
-
           </div>
         </div>
 
         {/* TABLE */}
-        <div className="
+        <div
+          className="
           bg-white
           rounded-3xl
           shadow-sm
           border
           border-gray-100
           overflow-hidden
-        ">
-
+        "
+        >
           {loading ? (
-
-            <div className="
+            <div
+              className="
               flex
               flex-col
               items-center
               justify-center
               py-20
               gap-3
-            ">
-
-              <div className="
+            "
+            >
+              <div
+                className="
                 w-7
                 h-7
                 rounded-full
@@ -260,126 +217,133 @@ export default function Notifications() {
                 border-gray-200
                 border-t-[#1d2433]
                 animate-spin
-              " />
+              "
+              />
 
-              <p className="
+              <p
+                className="
                 text-sm
                 text-gray-400
-              ">
+              "
+              >
                 Memuat notifikasi...
               </p>
-
             </div>
-
           ) : filteredNotifications.length === 0 ? (
-
-            <div className="
+            <div
+              className="
               text-center
               py-20
               text-gray-400
-            ">
+            "
+            >
               Tidak ada notifikasi
             </div>
-
           ) : (
-
             <>
               <div className="overflow-x-auto">
-
                 <table className="w-full min-w-[1000px] text-sm">
-
                   <thead className="bg-[#f8f9fa]">
-
-                    <tr className="
+                    <tr
+                      className="
                       border-b
                       border-gray-100
-                    ">
-
-                      <th className="
+                    "
+                    >
+                      <th
+                        className="
                         text-left
                         px-5
                         py-4
                         w-16
-                      ">
+                      "
+                      >
                         #
                       </th>
 
-                      <th className="
+                      <th
+                        className="
                         text-left
                         px-5
                         py-4
-                      ">
+                      "
+                      >
                         Jenis
                       </th>
 
-                      <th className="
+                      <th
+                        className="
                         text-left
                         px-5
                         py-4
-                      ">
+                      "
+                      >
                         Nama Siswa
                       </th>
 
-                      <th className="
+                      <th
+                        className="
                         text-left
                         px-5
                         py-4
-                      ">
+                      "
+                      >
                         Kelas
                       </th>
 
-                      <th className="
+                      <th
+                        className="
                         text-left
                         px-5
                         py-4
-                      ">
+                      "
+                      >
                         Alasan
                       </th>
 
-                      <th className="
+                      <th
+                        className="
                         text-left
                         px-5
                         py-4
-                      ">
+                      "
+                      >
                         Tanggal
                       </th>
-
                     </tr>
-
                   </thead>
 
                   <tbody>
-
-                    {paginatedNotifications.map(
-                      (item, index) => (
-
-                        <tr
-                          key={`${item.nis}-${item.tanggal}-${index}`}
-                          className="
+                    {paginatedNotifications.map((item, index) => (
+                      <tr
+                        key={`${item.nis}-${item.tanggal}-${index}`}
+                        className="
                             border-b
                             border-gray-50
                             hover:bg-gray-50
                             transition
                           "
-                        >
-
-                          <td className="
+                      >
+                        <td
+                          className="
                             px-5
                             py-4
                             text-gray-400
-                          ">
-                            {startIndex + index + 1}
-                          </td>
+                          "
+                        >
+                          {startIndex + index + 1}
+                        </td>
 
-                          <td className="px-5 py-4">
-
-                            <div className="
+                        <td className="px-5 py-4">
+                          <div
+                            className="
                               flex
                               items-center
                               gap-2
-                            ">
-
-                              <div className="
+                            "
+                          >
+                            <div
+                              className="
                                 w-9
                                 h-9
                                 rounded-full
@@ -388,85 +352,83 @@ export default function Notifications() {
                                 items-center
                                 justify-center
                                 shrink-0
-                              ">
-
-                                <Bell
-                                  size={16}
-                                  className="
+                              "
+                            >
+                              <Bell
+                                size={16}
+                                className="
                                     text-yellow-600
                                   "
-                                />
+                              />
+                            </div>
 
-                              </div>
-
-                              <span className="
+                            <span
+                              className="
                                 font-bold
                                 text-[#1d2433]
                                 whitespace-nowrap
-                              ">
-                                Pengajuan izin baru
-                              </span>
+                              "
+                            >
+                              Pengajuan izin baru
+                            </span>
+                          </div>
+                        </td>
 
-                            </div>
-
-                          </td>
-
-                          <td className="
+                        <td
+                          className="
                             px-5
                             py-4
                             font-semibold
                             text-gray-700
-                          ">
-                            {item.nama_siswa}
-                          </td>
+                          "
+                        >
+                          {item.nama_siswa}
+                        </td>
 
-                          <td className="
+                        <td
+                          className="
                             px-5
                             py-4
                             text-gray-600
-                          ">
-                            {item.kelas}
-                          </td>
+                          "
+                        >
+                          {item.kelas}
+                        </td>
 
-                          <td className="
+                        <td
+                          className="
                             px-5
                             py-4
                             text-gray-500
-                          ">
-                            {item.alasan || "-"}
-                          </td>
+                          "
+                        >
+                          {item.alasan || "-"}
+                        </td>
 
-                          <td className="px-5 py-4">
-
-                            <div className="
+                        <td className="px-5 py-4">
+                          <div
+                            className="
                               flex
                               items-center
                               gap-2
                               text-gray-500
                               whitespace-nowrap
-                            ">
+                            "
+                          >
+                            <CalendarDays size={14} />
 
-                              <CalendarDays size={14} />
-
-                              {item.tanggal}
-
-                            </div>
-
-                          </td>
-
-                        </tr>
-
-                      )
-                    )}
-
+                            {item.tanggal}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
-
                 </table>
-
               </div>
 
               {/* PAGINATION */}
-              <div className="
+              <div
+                className="
                 flex
                 flex-col
                 lg:flex-row
@@ -476,33 +438,29 @@ export default function Notifications() {
                 p-5
                 border-t
                 border-gray-100
-              ">
-
-                <div className="
+              "
+              >
+                <div
+                  className="
                   text-sm
                   text-gray-500
                   font-semibold
-                ">
-
-                  Menampilkan{" "}
-                  {paginatedNotifications.length} dari{" "}
+                "
+                >
+                  Menampilkan {paginatedNotifications.length} dari{" "}
                   {filteredNotifications.length} data
-
                 </div>
 
-                <div className="
+                <div
+                  className="
                   flex
                   items-center
                   gap-2
-                ">
-
+                "
+                >
                   <button
                     disabled={currentPage === 1}
-                    onClick={() =>
-                      setCurrentPage(
-                        (prev) => prev - 1
-                      )
-                    }
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
                     className="
                       px-4
                       py-2
@@ -518,7 +476,8 @@ export default function Notifications() {
                     Prev
                   </button>
 
-                  <div className="
+                  <div
+                    className="
                     px-4
                     py-2
                     rounded-xl
@@ -526,22 +485,14 @@ export default function Notifications() {
                     text-white
                     text-sm
                     font-bold
-                  ">
-
+                  "
+                  >
                     {currentPage} / {totalPages || 1}
-
                   </div>
 
                   <button
-                    disabled={
-                      currentPage === totalPages ||
-                      totalPages === 0
-                    }
-                    onClick={() =>
-                      setCurrentPage(
-                        (prev) => prev + 1
-                      )
-                    }
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
                     className="
                       px-4
                       py-2
@@ -556,9 +507,7 @@ export default function Notifications() {
                   >
                     Next
                   </button>
-
                 </div>
-
               </div>
             </>
           )}

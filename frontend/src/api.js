@@ -1,6 +1,4 @@
-const API_BASE =
-  import.meta.env.VITE_API_BASE ||
-  'http://127.0.0.1:8000';
+const API_BASE = import.meta.env.VITE_API_URL;
 
 // =====================================================
 // AUTHENTICATION
@@ -8,49 +6,37 @@ const API_BASE =
 
 // 1. Login User
 export async function loginUser(username, password) {
-
   try {
+    const response = await fetch(`${API_BASE}/login`, {
+      method: "POST",
 
-    const response = await fetch(
-      `${API_BASE}/login`,
-      {
-        method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          username,
-          password
-        }),
-      }
-    );
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
 
     const data = await response.json();
 
     console.log("LOGIN RESPONSE:", data);
 
     if (!response.ok) {
-
       return {
-
         success: false,
 
         message:
-          typeof data?.detail === "string"
-            ? data.detail
-            : "Login gagal.",
-
+          typeof data?.detail === "string" ? data.detail : "Login gagal.",
       };
-
     }
 
     return {
-
       success: true,
 
-      role: data.role || 'siswa',
+      role: data.role || "siswa",
 
       name: data.name || username,
 
@@ -62,24 +48,17 @@ export async function loginUser(username, password) {
 
       kelas: data.kelas,
 
-      message: 'Login berhasil',
-
+      message: "Login berhasil",
     };
-
   } catch (error) {
-
     console.error(error);
 
     return {
-
       success: false,
 
-      message: 'Server tidak terhubung.',
-
+      message: "Server tidak terhubung.",
     };
-
   }
-
 }
 
 // =====================================================
@@ -88,28 +67,17 @@ export async function loginUser(username, password) {
 
 // 2. Get Admin Summary / Dashboard
 export async function getAdminSummary() {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/admin/summary`
-    );
+    const response = await fetch(`${API_BASE}/admin/summary`);
 
     if (!response.ok) return null;
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching admin summary:',
-      error
-    );
+    console.error("Error fetching admin summary:", error);
 
     return null;
-
   }
-
 }
 
 // =====================================================
@@ -118,37 +86,21 @@ export async function getAdminSummary() {
 
 // 3. Get Semua Kelas
 export async function getKelas() {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/classes`
-    );
+    const response = await fetch(`${API_BASE}/classes`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching classes:',
-        response.statusText
-      );
+      console.error("Error fetching classes:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching kelas:',
-      error
-    );
+    console.error("Error fetching kelas:", error);
 
     return [];
-
   }
-
 }
 
 // =====================================================
@@ -157,72 +109,40 @@ export async function getKelas() {
 
 // 4. Get Semua Siswa
 export async function getAllStudents() {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/students`
-    );
+    const response = await fetch(`${API_BASE}/students`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching students:',
-        response.statusText
-      );
+      console.error("Error fetching students:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching students:',
-      error
-    );
+    console.error("Error fetching students:", error);
 
     return [];
-
   }
-
 }
 
 // 5. Get Data Siswa Berdasarkan NIS
 export async function getStudentByNis(nis) {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/students/${nis}`
-    );
+    const response = await fetch(`${API_BASE}/students/${nis}`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching student:',
-        response.statusText
-      );
+      console.error("Error fetching student:", response.statusText);
 
       return null;
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching student:',
-      error
-    );
+    console.error("Error fetching student:", error);
 
     return null;
-
   }
-
 }
 
 // =====================================================
@@ -231,37 +151,21 @@ export async function getStudentByNis(nis) {
 
 // 6. Get Semua Guru
 export async function getAllTeachers() {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/teachers`
-    );
+    const response = await fetch(`${API_BASE}/teachers`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching teachers:',
-        response.statusText
-      );
+      console.error("Error fetching teachers:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching teachers:',
-      error
-    );
+    console.error("Error fetching teachers:", error);
 
     return [];
-
   }
-
 }
 
 // =====================================================
@@ -270,74 +174,40 @@ export async function getAllTeachers() {
 
 // 7. Get Semua Jadwal Pelajaran
 export async function getAllSchedules() {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/schedules`
-    );
+    const response = await fetch(`${API_BASE}/schedules`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching schedules:',
-        response.statusText
-      );
+      console.error("Error fetching schedules:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching schedules:',
-      error
-    );
+    console.error("Error fetching schedules:", error);
 
     return [];
-
   }
-
 }
 
 // 8. Get Jadwal Pelajaran Berdasarkan Kelas
-export async function getSchedulesByClass(
-  className
-) {
-
+export async function getSchedulesByClass(className) {
   try {
-
-    const response = await fetch(
-      `${API_BASE}/schedules/class/${className}`
-    );
+    const response = await fetch(`${API_BASE}/schedules/class/${className}`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching class schedules:',
-        response.statusText
-      );
+      console.error("Error fetching class schedules:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching class schedules:',
-      error
-    );
+    console.error("Error fetching class schedules:", error);
 
     return [];
-
   }
-
 }
 
 // =====================================================
@@ -345,75 +215,41 @@ export async function getSchedulesByClass(
 // =====================================================
 
 // 9. Get Absensi Siswa
-export async function getStudentAttendance(
-  nis
-) {
-
+export async function getStudentAttendance(nis) {
   try {
-
-    const response = await fetch(
-      `${API_BASE}/attendance/${nis}`
-    );
+    const response = await fetch(`${API_BASE}/attendance/${nis}`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching attendance:',
-        response.statusText
-      );
+      console.error("Error fetching attendance:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching attendance:',
-      error
-    );
+    console.error("Error fetching attendance:", error);
 
     return [];
-
   }
-
 }
 
 // 10. Get Absensi Hari Ini
 export async function getTodayAttendance() {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/attendance/today`
-    );
+    const response = await fetch(`${API_BASE}/attendance/today`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching today attendance:',
-        response.statusText
-      );
+      console.error("Error fetching today attendance:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching today attendance:',
-      error
-    );
+    console.error("Error fetching today attendance:", error);
 
     return [];
-
   }
-
 }
 
 // 11. Absen Masuk
@@ -422,60 +258,45 @@ export async function absenMasuk(
   latitude,
   longitude,
   accuracy,
-  image_base64
+  image_base64,
 ) {
-
   try {
+    const response = await fetch(`${API_BASE}/absen/masuk`, {
+      method: "POST",
 
-    const response = await fetch(
-      `${API_BASE}/absen/masuk`,
-      {
-        method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          nis,
-          latitude,
-          longitude,
-          accuracy,
-          image_base64
-        }),
-      }
-    );
+      body: JSON.stringify({
+        nis,
+        latitude,
+        longitude,
+        accuracy,
+        image_base64,
+      }),
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-
       return {
         success: false,
-        message:
-          data?.error ||
-          'Absen masuk gagal.',
+        message: data?.error || "Absen masuk gagal.",
       };
-
     }
 
     return {
       success: true,
-      message:
-        data?.message ||
-        'Absen masuk berhasil',
+      message: data?.message || "Absen masuk berhasil",
       data: data,
     };
-
   } catch (error) {
-
     return {
       success: false,
-      message: 'Server tidak terhubung.',
+      message: "Server tidak terhubung.",
     };
-
   }
-
 }
 
 // 12. Absen Keluar
@@ -484,60 +305,45 @@ export async function absenKeluar(
   latitude,
   longitude,
   accuracy,
-  image_base64
+  image_base64,
 ) {
-
   try {
+    const response = await fetch(`${API_BASE}/absen/keluar`, {
+      method: "POST",
 
-    const response = await fetch(
-      `${API_BASE}/absen/keluar`,
-      {
-        method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          nis,
-          latitude,
-          longitude,
-          accuracy,
-          image_base64
-        }),
-      }
-    );
+      body: JSON.stringify({
+        nis,
+        latitude,
+        longitude,
+        accuracy,
+        image_base64,
+      }),
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-
       return {
         success: false,
-        message:
-          data?.error ||
-          'Absen keluar gagal.',
+        message: data?.error || "Absen keluar gagal.",
       };
-
     }
 
     return {
       success: true,
-      message:
-        data?.message ||
-        'Absen keluar berhasil',
+      message: data?.message || "Absen keluar berhasil",
       data: data,
     };
-
   } catch (error) {
-
     return {
       success: false,
-      message: 'Server tidak terhubung.',
+      message: "Server tidak terhubung.",
     };
-
   }
-
 }
 
 // =====================================================
@@ -545,40 +351,22 @@ export async function absenKeluar(
 // =====================================================
 
 // 13. Get Form Izin Siswa
-export async function getPermissionForms(
-  nis
-) {
-
+export async function getPermissionForms(nis) {
   try {
-
-    const response = await fetch(
-      `${API_BASE}/permission-forms/${nis}`
-    );
+    const response = await fetch(`${API_BASE}/permission-forms/${nis}`);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching permission forms:',
-        response.statusText
-      );
+      console.error("Error fetching permission forms:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching permission forms:',
-      error
-    );
+    console.error("Error fetching permission forms:", error);
 
     return [];
-
   }
-
 }
 
 // =====================================================
@@ -589,106 +377,65 @@ export async function getPermissionForms(
 export async function getAttendanceReport(
   classId,
   startDate = null,
-  endDate = null
+  endDate = null,
 ) {
-
   try {
-
-    let url =
-      `${API_BASE}/attendance-report/class/${classId}`;
+    let url = `${API_BASE}/attendance-report/class/${classId}`;
 
     const params = new URLSearchParams();
 
     if (startDate) {
-
-      params.append(
-        'start_date',
-        startDate
-      );
-
+      params.append("start_date", startDate);
     }
 
     if (endDate) {
-
-      params.append(
-        'end_date',
-        endDate
-      );
-
+      params.append("end_date", endDate);
     }
 
     if (params.toString()) {
-
       url += `?${params.toString()}`;
-
     }
 
     const response = await fetch(url);
 
     if (!response.ok) {
-
-      console.error(
-        'Error fetching attendance report:',
-        response.statusText
-      );
+      console.error("Error fetching attendance report:", response.statusText);
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching attendance report:',
-      error
-    );
+    console.error("Error fetching attendance report:", error);
 
     return [];
-
   }
-
 }
 
 // 16. Get Data Rekap dari student_attendance_data
-export async function getStudentAttendanceData(
-  nama_kelas,
-  bulan
-) {
-
+export async function getStudentAttendanceData(nama_kelas, bulan) {
   try {
-
     const response = await fetch(
       `${API_BASE}/student-attendance-data?nama_kelas=${encodeURIComponent(
-        nama_kelas
-      )}&bulan=${bulan}`
+        nama_kelas,
+      )}&bulan=${bulan}`,
     );
 
     if (!response.ok) {
-
       console.error(
-        'Error fetching student attendance data:',
-        response.statusText
+        "Error fetching student attendance data:",
+        response.statusText,
       );
 
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      'Error fetching student attendance data:',
-      error
-    );
+    console.error("Error fetching student attendance data:", error);
 
     return [];
-
   }
-
 }
 
 // =====================================================
@@ -696,66 +443,42 @@ export async function getStudentAttendanceData(
 // =====================================================
 
 // 17. Update Jam Keluar Absensi
-export async function updateAttendance(
-  id_absen,
-  jam_keluar
-) {
-
+export async function updateAttendance(id_absen, jam_keluar) {
   try {
+    const response = await fetch(`${API_BASE}/attendance/${id_absen}`, {
+      method: "PUT",
 
-    const response = await fetch(
-      `${API_BASE}/attendance/${id_absen}`,
-      {
-        method: 'PUT',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          jam_keluar
-        }),
-      }
-    );
+      body: JSON.stringify({
+        jam_keluar,
+      }),
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-
       return {
-
         success: false,
 
-        message:
-          data?.detail ||
-          'Update absensi gagal.',
-
+        message: data?.detail || "Update absensi gagal.",
       };
-
     }
 
     return {
-
       success: true,
 
-      message:
-        data?.message ||
-        'Absensi berhasil diperbarui',
-
+      message: data?.message || "Absensi berhasil diperbarui",
     };
-
   } catch (error) {
-
     return {
-
       success: false,
 
-      message: 'Server tidak terhubung.',
-
+      message: "Server tidak terhubung.",
     };
-
   }
-
 }
 
 // =====================================================
@@ -765,65 +488,44 @@ export async function updateAttendance(
 export async function updateAttendanceStatus(
   id_absen,
   status_kehadiran,
-  keterangan = ''
+  keterangan = "",
 ) {
-
   try {
+    const response = await fetch(`${API_BASE}/attendance-status/${id_absen}`, {
+      method: "PUT",
 
-    const response = await fetch(
-      `${API_BASE}/attendance-status/${id_absen}`,
-      {
-        method: 'PUT',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          status_kehadiran,
-          keterangan
-        }),
-      }
-    );
+      body: JSON.stringify({
+        status_kehadiran,
+        keterangan,
+      }),
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-
       return {
-
         success: false,
 
-        message:
-          data?.detail ||
-          'Update gagal',
-
+        message: data?.detail || "Update gagal",
       };
-
     }
 
     return {
-
       success: true,
 
-      message:
-        data?.message ||
-        'Berhasil',
-
+      message: data?.message || "Berhasil",
     };
-
   } catch (error) {
-
     return {
-
       success: false,
 
-      message: 'Server tidak terhubung',
-
+      message: "Server tidak terhubung",
     };
-
   }
-
 }
 
 // =====================================================
@@ -831,55 +533,39 @@ export async function updateAttendanceStatus(
 // =====================================================
 
 // 18. Verifikasi Wajah Sebelum Absen
-export async function verifyFace(
-  nis,
-  image_base64
-) {
-
+export async function verifyFace(nis, image_base64) {
   try {
+    const response = await fetch(`${API_BASE}/face/verify`, {
+      method: "POST",
 
-    const response = await fetch(
-      `${API_BASE}/face/verify`,
-      {
-        method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          nis,
-          image_base64
-        }),
-      }
-    );
+      body: JSON.stringify({
+        nis,
+        image_base64,
+      }),
+    });
 
     const data = await response.json();
 
     return {
-
       success: response.ok,
 
       match: data.match,
 
       message: data.message,
 
-      confidence: data.confidence
-
+      confidence: data.confidence,
     };
-
   } catch {
-
     return {
-
       success: false,
 
-      message: 'Server tidak terhubung'
-
+      message: "Server tidak terhubung",
     };
-
   }
-
 }
 
 // =====================================================
@@ -887,78 +573,53 @@ export async function verifyFace(
 // =====================================================
 
 export async function searchUser(keyword) {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/admin/search-user?q=${keyword}`
-    );
+    const response = await fetch(`${API_BASE}/admin/search-user?q=${keyword}`);
 
     const data = await response.json();
 
     return data;
-
   } catch (error) {
-
     console.error(error);
 
     return {
-
-      found: false
-
+      found: false,
     };
-
   }
-
 }
 
 // =====================================================
 // RESET PASSWORD USER
 // =====================================================
 
-export async function resetUserPassword(
-  role,
-  user_id,
-  new_password
-) {
-
+export async function resetUserPassword(role, user_id, new_password) {
   try {
+    const response = await fetch(`${API_BASE}/admin/reset-password`, {
+      method: "POST",
 
-    const response = await fetch(
-      `${API_BASE}/admin/reset-password`,
-      {
-        method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          role,
-          user_id: String(user_id),
-          new_password
-        }),
-      }
-    );
+      body: JSON.stringify({
+        role,
+        user_id: String(user_id),
+        new_password,
+      }),
+    });
 
     const data = await response.json();
 
     return data;
-
   } catch (error) {
-
     console.error(error);
 
     return {
-
       success: false,
 
-      message: 'Server tidak terhubung'
-
+      message: "Server tidak terhubung",
     };
-
   }
-
 }
 
 // =====================================================
@@ -968,11 +629,9 @@ export async function resetUserPassword(
 export const getAttendanceHistory = async (
   kelas = "",
   tanggal = "",
-  search = ""
+  search = "",
 ) => {
-
   try {
-
     const params = new URLSearchParams();
 
     if (kelas) {
@@ -988,23 +647,16 @@ export const getAttendanceHistory = async (
     }
 
     const response = await fetch(
-      `http://127.0.0.1:8000/attendance-history?${params.toString()}`
+      `${API_BASE}/attendance-history?${params.toString()}`,
     );
 
     if (!response.ok) {
-      throw new Error(
-        "Gagal mengambil history absensi"
-      );
+      throw new Error("Gagal mengambil history absensi");
     }
 
     return await response.json();
-
   } catch (error) {
-
-    console.error(
-      "Error fetching attendance history:",
-      error
-    );
+    console.error("Error fetching attendance history:", error);
 
     return [];
   }
@@ -1015,24 +667,17 @@ export const getAttendanceHistory = async (
 // ======================================
 
 export const importStudents = async (file) => {
-
   const formData = new FormData();
 
   formData.append("file", file);
 
-  const response = await fetch(
-    "http://127.0.0.1:8000/students/import",
-    {
-      method: "POST",
-      body: formData,
-    }
-  );
+  const response = await fetch(`${API_BASE}/students/import`, {
+    method: "POST",
+    body: formData,
+  });
 
   if (!response.ok) {
-
-    throw new Error(
-      "Gagal import data siswa"
-    );
+    throw new Error("Gagal import data siswa");
   }
 
   return await response.json();
@@ -1042,148 +687,101 @@ export const importStudents = async (file) => {
 // HISTORY SISWA SENDIRI
 // =====================================================
 
-export async function getStudentHistory(
-  nis
-) {
-
+export async function getStudentHistory(nis) {
   try {
-
-    const response = await fetch(
-      `${API_BASE}/student-history/${nis}`
-    );
+    const response = await fetch(`${API_BASE}/student-history/${nis}`);
 
     if (!response.ok) {
-
-      throw new Error(
-        'Gagal mengambil history siswa'
-      );
-
+      throw new Error("Gagal mengambil history siswa");
     }
 
     return await response.json();
-
   } catch (error) {
-
     console.error(error);
 
     return [];
-
   }
-
 }
 
 // =====================================================
 // SUBMIT IZIN SISWA
 // =====================================================
 
-export async function submitPermissionForm(
-  formData
-) {
-
+export async function submitPermissionForm(formData) {
   try {
+    const response = await fetch(`${API_BASE}/izin/submit`, {
+      method: "POST",
 
-    const response = await fetch(
-      `${API_BASE}/izin/submit`,
-      {
-        method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      body: JSON.stringify(formData),
+    });
 
-        body: JSON.stringify(formData)
-      }
-    );
+    const data = await response.json();
 
-      const data = await response.json();
-
-      return {
-        success: data?.success === true,
-        message:
-          data?.message ||
-          (data?.detail) ||
-          (response.ok ? 'Izin berhasil dikirim' : 'Gagal mengirim izin')
-      };
-
+    return {
+      success: data?.success === true,
+      message:
+        data?.message ||
+        data?.detail ||
+        (response.ok ? "Izin berhasil dikirim" : "Gagal mengirim izin"),
+    };
   } catch (error) {
-
     console.error(error);
 
     return {
       success: false,
-      message: 'Server tidak terhubung'
+      message: "Server tidak terhubung",
     };
-
   }
-
 }
 
 // =====================================================
 // GET NOTIFICATIONS
 // =====================================================
 
-export async function getNotifications(
-  nis
-) {
-
+export async function getNotifications(nis) {
   try {
-
-    const response = await fetch(
-      `${API_BASE}/notifications/${nis}`
-    );
+    const response = await fetch(`${API_BASE}/notifications/${nis}`);
 
     if (!response.ok) {
-
       return [];
-
     }
 
     return await response.json();
-
   } catch (error) {
-
     console.error(error);
 
     return [];
-
   }
-
 }
 
 // =====================================================
 // UNREAD NOTIFICATION COUNT
 // =====================================================
 
-export async function getUnreadNotificationCount(
-  nis
-) {
-
+export async function getUnreadNotificationCount(nis) {
   try {
-
     const response = await fetch(
-      `${API_BASE}/notifications/unread-count/${nis}`
+      `${API_BASE}/notifications/unread-count/${nis}`,
     );
 
     if (!response.ok) {
-
       return {
-        total: 0
+        total: 0,
       };
-
     }
 
     return await response.json();
-
   } catch (error) {
-
     console.error(error);
 
     return {
-      total: 0
+      total: 0,
     };
-
   }
-
 }
 
 // =====================================================
@@ -1191,33 +789,23 @@ export async function getUnreadNotificationCount(
 // =====================================================
 
 export async function getGuruNotificationCount() {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/guru/notifications/count`
-    );
+    const response = await fetch(`${API_BASE}/guru/notifications/count`);
 
     if (!response.ok) {
-
       return {
-        total: 0
+        total: 0,
       };
-
     }
 
     return await response.json();
-
   } catch (error) {
-
     console.error(error);
 
     return {
-      total: 0
+      total: 0,
     };
-
   }
-
 }
 
 // =====================================================
@@ -1225,33 +813,23 @@ export async function getGuruNotificationCount() {
 // =====================================================
 
 export async function getAdminNotificationCount() {
-
   try {
-
-    const response = await fetch(
-      `${API_BASE}/admin/notifications/count`
-    );
+    const response = await fetch(`${API_BASE}/admin/notifications/count`);
 
     if (!response.ok) {
-
       return {
-        total: 0
+        total: 0,
       };
-
     }
 
     return await response.json();
-
   } catch (error) {
-
     console.error(error);
 
     return {
-      total: 0
+      total: 0,
     };
-
   }
-
 }
 
 // =====================================================
@@ -1259,23 +837,15 @@ export async function getAdminNotificationCount() {
 // =====================================================
 
 export const getWeeklyAttendance = async () => {
-
   try {
-
-    const response = await fetch(
-      "http://127.0.0.1:8000/attendance/weekly"
-    );
+    const response = await fetch(`${API_BASE}/attendance/weekly`);
 
     return await response.json();
-
   } catch (error) {
-
     console.error(error);
 
     return [];
-
   }
-
 };
 
 // =====================================================
@@ -1286,42 +856,33 @@ export async function changePassword(
   username,
   old_password,
   new_password,
-  role
+  role,
 ) {
-
   try {
+    const response = await fetch(`${API_BASE}/change-password`, {
+      method: "POST",
 
-    const response = await fetch(
-      `${API_BASE}/change-password`,
-      {
-        method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          username,
-          old_password,
-          new_password,
-          role
-        }),
-      }
-    );
+      body: JSON.stringify({
+        username,
+        old_password,
+        new_password,
+        role,
+      }),
+    });
 
     const data = await response.json();
 
     return data;
-
   } catch (error) {
-
     console.error(error);
 
     return {
       success: false,
-      message: 'Server tidak terhubung'
+      message: "Server tidak terhubung",
     };
-
   }
-
 }

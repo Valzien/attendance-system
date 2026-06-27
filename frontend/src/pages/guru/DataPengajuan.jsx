@@ -10,7 +10,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function DataPengajuan() {
   const [search, setSearch] = useState("");
@@ -49,23 +49,21 @@ export default function DataPengajuan() {
       const nis = String(item.nis || "").toLowerCase();
       const nama = String(item.nama_siswa || "").toLowerCase();
       const kelas = String(item.kelas || "").toLowerCase();
-      return nis.includes(query) || nama.includes(query) || kelas.includes(query);
+      return (
+        nis.includes(query) || nama.includes(query) || kelas.includes(query)
+      );
     });
   }, [search, izinData]);
 
   // PAGINATION
-  const totalPages = Math.ceil(
-    filteredStudents.length / itemsPerPage
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+
+  const paginatedStudents = filteredStudents.slice(
+    startIndex,
+    startIndex + itemsPerPage,
   );
-
-  const startIndex =
-    (currentPage - 1) * itemsPerPage;
-
-  const paginatedStudents =
-    filteredStudents.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
 
   const getLampiranUrl = (lampiran) => {
     if (!lampiran) {
@@ -79,16 +77,18 @@ export default function DataPengajuan() {
 
   const statusColor = (status) => {
     switch (status) {
-      case "disetujui": return "bg-emerald-100 text-emerald-700";
-      case "ditolak":   return "bg-red-100 text-red-700";
-      default:          return "bg-amber-100 text-amber-700";
+      case "disetujui":
+        return "bg-emerald-100 text-emerald-700";
+      case "ditolak":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-amber-100 text-amber-700";
     }
   };
 
   return (
     <Layout>
       <div className="min-h-screen bg-[#f6f8fb] p-5">
-
         {!selectedStudent ? (
           <>
             {/* HEADER */}
@@ -104,7 +104,10 @@ export default function DataPengajuan() {
 
               {/* SEARCH */}
               <div className="relative w-full lg:w-[340px]">
-                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Search
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                />
                 <input
                   type="text"
                   value={search}
@@ -121,24 +124,40 @@ export default function DataPengajuan() {
                 <table className="w-full">
                   <thead>
                     <tr className="bg-[#f8fafc] border-b border-gray-100">
-                      <th className="text-left px-6 py-4 text-xs font-black text-gray-400 uppercase">Siswa</th>
-                      <th className="text-left px-6 py-4 text-xs font-black text-gray-400 uppercase">Kelas</th>
-                      <th className="text-left px-6 py-4 text-xs font-black text-gray-400 uppercase">Tanggal</th>
-                      <th className="text-left px-6 py-4 text-xs font-black text-gray-400 uppercase">Status</th>
-                      <th className="text-center px-6 py-4 text-xs font-black text-gray-400 uppercase">Aksi</th>
+                      <th className="text-left px-6 py-4 text-xs font-black text-gray-400 uppercase">
+                        Siswa
+                      </th>
+                      <th className="text-left px-6 py-4 text-xs font-black text-gray-400 uppercase">
+                        Kelas
+                      </th>
+                      <th className="text-left px-6 py-4 text-xs font-black text-gray-400 uppercase">
+                        Tanggal
+                      </th>
+                      <th className="text-left px-6 py-4 text-xs font-black text-gray-400 uppercase">
+                        Status
+                      </th>
+                      <th className="text-center px-6 py-4 text-xs font-black text-gray-400 uppercase">
+                        Aksi
+                      </th>
                     </tr>
                   </thead>
 
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan="5" className="py-20 text-center text-sm text-gray-400">
+                        <td
+                          colSpan="5"
+                          className="py-20 text-center text-sm text-gray-400"
+                        >
                           Memuat data...
                         </td>
                       </tr>
                     ) : filteredStudents.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="py-20 text-center text-sm text-gray-400">
+                        <td
+                          colSpan="5"
+                          className="py-20 text-center text-sm text-gray-400"
+                        >
                           Tidak ada pengajuan izin
                         </td>
                       </tr>
@@ -154,15 +173,25 @@ export default function DataPengajuan() {
                                 {student.nama_siswa?.charAt(0)}
                               </div>
                               <div>
-                                <h2 className="text-sm font-bold text-[#1d2433]">{student.nama_siswa}</h2>
-                                <p className="text-xs text-gray-400 mt-0.5">NIS: {student.nis}</p>
+                                <h2 className="text-sm font-bold text-[#1d2433]">
+                                  {student.nama_siswa}
+                                </h2>
+                                <p className="text-xs text-gray-400 mt-0.5">
+                                  NIS: {student.nis}
+                                </p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-5 text-sm font-semibold text-gray-700">{student.kelas}</td>
-                          <td className="px-6 py-5 text-sm text-gray-600">{student.tanggal}</td>
+                          <td className="px-6 py-5 text-sm font-semibold text-gray-700">
+                            {student.kelas}
+                          </td>
+                          <td className="px-6 py-5 text-sm text-gray-600">
+                            {student.tanggal}
+                          </td>
                           <td className="px-6 py-5">
-                            <span className={`px-3 py-1 rounded-full text-xs font-black ${statusColor(student.status)}`}>
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-black ${statusColor(student.status)}`}
+                            >
                               {student.status || "pending"}
                             </span>
                           </td>
@@ -196,7 +225,6 @@ export default function DataPengajuan() {
                     border-gray-100
                   "
                 >
-
                   {/* INFO */}
                   <div className="text-[13px] font-semibold text-gray-500">
                     Menampilkan {paginatedStudents.length} dari{" "}
@@ -205,7 +233,6 @@ export default function DataPengajuan() {
 
                   {/* RIGHT */}
                   <div className="flex items-center gap-3">
-
                     {/* LIMIT */}
                     <select
                       value={itemsPerPage}
@@ -231,12 +258,9 @@ export default function DataPengajuan() {
 
                     {/* BUTTON */}
                     <div className="flex items-center gap-2">
-
                       <button
                         disabled={currentPage === 1}
-                        onClick={() =>
-                          setCurrentPage((prev) => prev - 1)
-                        }
+                        onClick={() => setCurrentPage((prev) => prev - 1)}
                         className="
                           px-4
                           py-2
@@ -268,12 +292,9 @@ export default function DataPengajuan() {
 
                       <button
                         disabled={
-                          currentPage === totalPages ||
-                          totalPages === 0
+                          currentPage === totalPages || totalPages === 0
                         }
-                        onClick={() =>
-                          setCurrentPage((prev) => prev + 1)
-                        }
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
                         className="
                           px-4
                           py-2
@@ -288,7 +309,6 @@ export default function DataPengajuan() {
                       >
                         Next
                       </button>
-
                     </div>
                   </div>
                 </div>
@@ -308,14 +328,15 @@ export default function DataPengajuan() {
             </button>
 
             <div className="bg-white rounded-[30px] shadow-sm border border-gray-100 p-8">
-
               {/* DETAIL HEADER */}
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-16 h-16 rounded-3xl bg-[#dff4ff] flex items-center justify-center text-2xl font-black text-[#1d2433]">
                   {selectedStudent.nama_siswa?.charAt(0)}
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black text-[#1d2433]">{selectedStudent.nama_siswa}</h1>
+                  <h1 className="text-2xl font-black text-[#1d2433]">
+                    {selectedStudent.nama_siswa}
+                  </h1>
                   <p className="text-sm text-gray-400">Detail Pengajuan Izin</p>
                 </div>
               </div>
@@ -327,7 +348,9 @@ export default function DataPengajuan() {
                     <User size={16} />
                     <span className="text-xs font-bold uppercase">NIS</span>
                   </div>
-                  <p className="text-sm font-black text-[#1d2433]">{selectedStudent.nis}</p>
+                  <p className="text-sm font-black text-[#1d2433]">
+                    {selectedStudent.nis}
+                  </p>
                 </div>
 
                 <div className="bg-[#f8fafc] rounded-2xl p-5">
@@ -335,7 +358,9 @@ export default function DataPengajuan() {
                     <School size={16} />
                     <span className="text-xs font-bold uppercase">Kelas</span>
                   </div>
-                  <p className="text-sm font-black text-[#1d2433]">{selectedStudent.kelas}</p>
+                  <p className="text-sm font-black text-[#1d2433]">
+                    {selectedStudent.kelas}
+                  </p>
                 </div>
 
                 <div className="bg-[#f8fafc] rounded-2xl p-5">
@@ -343,7 +368,9 @@ export default function DataPengajuan() {
                     <CalendarDays size={16} />
                     <span className="text-xs font-bold uppercase">Tanggal</span>
                   </div>
-                  <p className="text-sm font-black text-[#1d2433]">{selectedStudent.tanggal}</p>
+                  <p className="text-sm font-black text-[#1d2433]">
+                    {selectedStudent.tanggal}
+                  </p>
                 </div>
 
                 <div className="bg-[#f8fafc] rounded-2xl p-5">
@@ -351,7 +378,9 @@ export default function DataPengajuan() {
                     <BadgeCheck size={16} />
                     <span className="text-xs font-bold uppercase">Status</span>
                   </div>
-                  <span className={`inline-flex px-3 py-1 rounded-full text-xs font-black ${statusColor(selectedStudent.status)}`}>
+                  <span
+                    className={`inline-flex px-3 py-1 rounded-full text-xs font-black ${statusColor(selectedStudent.status)}`}
+                  >
                     {selectedStudent.status || "pending"}
                   </span>
                 </div>
@@ -359,7 +388,9 @@ export default function DataPengajuan() {
 
               {/* ALASAN */}
               <div className="mt-6">
-                <h2 className="text-sm font-black text-gray-500 uppercase mb-3">Alasan Izin</h2>
+                <h2 className="text-sm font-black text-gray-500 uppercase mb-3">
+                  Alasan Izin
+                </h2>
                 <div className="bg-[#f8fafc] rounded-2xl p-5 text-sm text-gray-700 leading-relaxed min-h-[120px]">
                   {selectedStudent.alasan || "-"}
                 </div>
@@ -367,7 +398,9 @@ export default function DataPengajuan() {
 
               {/* LAMPIRAN */}
               <div className="mt-6">
-                <h2 className="text-sm font-black text-gray-500 uppercase mb-3">Lampiran</h2>
+                <h2 className="text-sm font-black text-gray-500 uppercase mb-3">
+                  Lampiran
+                </h2>
                 <button
                   onClick={() => setShowPreview(true)}
                   className="bg-[#3abef8] hover:bg-[#27aae3] text-white px-5 py-3 rounded-2xl text-sm font-black transition"
@@ -375,7 +408,6 @@ export default function DataPengajuan() {
                   Preview Foto
                 </button>
               </div>
-
             </div>
           </>
         )}
@@ -396,7 +428,6 @@ export default function DataPengajuan() {
             />
           </div>
         )}
-
       </div>
     </Layout>
   );

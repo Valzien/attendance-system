@@ -12,10 +12,10 @@ import {
   MinusCircle,
   Eye,
   MapPin,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const BULAN = [
   "Januari",
@@ -208,26 +208,21 @@ export default function History() {
 
   // PAGINATION
 
-  const totalPages = Math.ceil(
-    filteredHistory.length / limit
+  const totalPages = Math.ceil(filteredHistory.length / limit);
+
+  const startIndex = (currentPage - 1) * limit;
+
+  const paginatedHistory = filteredHistory.slice(
+    startIndex,
+    startIndex + limit,
   );
-
-  const startIndex =
-    (currentPage - 1) * limit;
-
-  const paginatedHistory =
-    filteredHistory.slice(
-      startIndex,
-      startIndex + limit
-    );
 
   const getDisplayStatus = (item) => {
     const lateMinutes = getLateMinutes(item.jam_masuk);
 
     if (
       lateMinutes > 0 &&
-      (item.status_kehadiran === "hadir" ||
-        item.status_kehadiran === "telat")
+      (item.status_kehadiran === "hadir" || item.status_kehadiran === "telat")
     ) {
       return {
         key: "terlambat",
@@ -236,12 +231,9 @@ export default function History() {
       };
     }
 
-    const key =
-      item.status_kehadiran || "tidak_hadir";
+    const key = item.status_kehadiran || "tidak_hadir";
 
-    const config =
-      STATUS_CONFIG[key] ||
-      STATUS_CONFIG.tidak_hadir;
+    const config = STATUS_CONFIG[key] || STATUS_CONFIG.tidak_hadir;
 
     return {
       key,
@@ -257,32 +249,24 @@ export default function History() {
       (d) =>
         d.status_kehadiran === "hadir" ||
         d.status_kehadiran === "telat" ||
-        d.status_kehadiran === "terlambat"
+        d.status_kehadiran === "terlambat",
     ).length,
 
-    izin: filteredHistory.filter(
-      (d) => d.status_kehadiran === "izin"
-    ).length,
+    izin: filteredHistory.filter((d) => d.status_kehadiran === "izin").length,
 
-    sakit: filteredHistory.filter(
-      (d) => d.status_kehadiran === "sakit"
-    ).length,
+    sakit: filteredHistory.filter((d) => d.status_kehadiran === "sakit").length,
 
     tidak_hadir: filteredHistory.filter(
       (d) =>
-        d.status_kehadiran === "alfa" ||
-        d.status_kehadiran === "tidak_hadir"
+        d.status_kehadiran === "alfa" || d.status_kehadiran === "tidak_hadir",
     ).length,
   };
 
   return (
     <Layout>
       <div className="w-full px-4 mt-4 pb-20">
-
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold">
-            History Absensi Saya
-          </h1>
+          <h1 className="text-2xl font-extrabold">History Absensi Saya</h1>
 
           <p className="text-gray-500 text-sm mt-1">
             Riwayat lengkap absensi masuk & keluar
@@ -291,9 +275,7 @@ export default function History() {
 
         {/* FILTER */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-
           <div className="flex flex-wrap gap-3">
-
             {/* BULAN */}
             <div className="relative">
               <select
@@ -385,64 +367,41 @@ export default function History() {
 
         {/* TABLE */}
         <div className="overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
-
           <table className="w-full min-w-[1100px]">
-
             <thead className="bg-[#f8f9fa]">
               <tr className="border-b border-gray-200 text-left">
+                <th className="px-5 py-4">Tanggal</th>
 
-                <th className="px-5 py-4">
-                  Tanggal
-                </th>
+                <th className="px-5 py-4 text-center">Jam Masuk</th>
 
-                <th className="px-5 py-4 text-center">
-                  Jam Masuk
-                </th>
+                <th className="px-5 py-4 text-center">Jam Keluar</th>
 
-                <th className="px-5 py-4 text-center">
-                  Jam Keluar
-                </th>
+                <th className="px-5 py-4 text-center">Status</th>
 
-                <th className="px-5 py-4 text-center">
-                  Status
-                </th>
-
-                <th className="px-5 py-4 text-center">
-                  Keterangan
-                </th>
-
+                <th className="px-5 py-4 text-center">Keterangan</th>
               </tr>
             </thead>
 
             <tbody>
               {loading ? (
                 <tr>
-                  <td
-                    colSpan="5"
-                    className="py-16 text-center"
-                  >
+                  <td colSpan="5" className="py-16 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-7 h-7 rounded-full border-[3px] border-gray-200 border-t-[#1d2433] animate-spin" />
 
-                      <p className="text-sm text-gray-400">
-                        Memuat data...
-                      </p>
+                      <p className="text-sm text-gray-400">Memuat data...</p>
                     </div>
                   </td>
                 </tr>
               ) : filteredHistory.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan="5"
-                    className="py-16 text-center text-gray-400"
-                  >
+                  <td colSpan="5" className="py-16 text-center text-gray-400">
                     Tidak ada history absensi
                   </td>
                 </tr>
               ) : (
                 paginatedHistory.map((item, index) => {
-                  const status =
-                    getDisplayStatus(item);
+                  const status = getDisplayStatus(item);
 
                   const cfg = status.config;
 
@@ -460,88 +419,64 @@ export default function History() {
                       {/* MASUK */}
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-center gap-2">
+                          <Clock size={13} className="text-gray-400" />
 
-                          <Clock
-                            size={13}
-                            className="text-gray-400"
-                          />
-
-                          <span>
-                            {formatJam(item.jam_masuk)}
-                          </span>
+                          <span>{formatJam(item.jam_masuk)}</span>
 
                           {item.foto_masuk && (
                             <button
-                              onClick={() =>
-                                setPreviewPhoto(
-                                  item.foto_masuk
-                                )
-                              }
+                              onClick={() => setPreviewPhoto(item.foto_masuk)}
                               className="text-blue-500 hover:text-blue-700"
                             >
                               <Eye size={16} />
                             </button>
                           )}
 
-                          {item.latitude_masuk &&
-                            item.longitude_masuk && (
-                              <button
-                                onClick={() =>
-                                  setPreviewMap({
-                                    lat: item.latitude_masuk,
-                                    lng: item.longitude_masuk,
-                                  })
-                                }
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <MapPin size={16} />
-                              </button>
-                            )}
-
+                          {item.latitude_masuk && item.longitude_masuk && (
+                            <button
+                              onClick={() =>
+                                setPreviewMap({
+                                  lat: item.latitude_masuk,
+                                  lng: item.longitude_masuk,
+                                })
+                              }
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <MapPin size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
 
                       {/* KELUAR */}
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-center gap-2">
+                          <Clock size={13} className="text-gray-400" />
 
-                          <Clock
-                            size={13}
-                            className="text-gray-400"
-                          />
-
-                          <span>
-                            {formatJam(item.jam_keluar)}
-                          </span>
+                          <span>{formatJam(item.jam_keluar)}</span>
 
                           {item.foto_keluar && (
                             <button
-                              onClick={() =>
-                                setPreviewPhoto(
-                                  item.foto_keluar
-                                )
-                              }
+                              onClick={() => setPreviewPhoto(item.foto_keluar)}
                               className="text-blue-500 hover:text-blue-700"
                             >
                               <Eye size={16} />
                             </button>
                           )}
 
-                          {item.latitude_keluar &&
-                            item.longitude_keluar && (
-                              <button
-                                onClick={() =>
-                                  setPreviewMap({
-                                    lat: item.latitude_keluar,
-                                    lng: item.longitude_keluar,
-                                  })
-                                }
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <MapPin size={16} />
-                              </button>
-                            )}
-
+                          {item.latitude_keluar && item.longitude_keluar && (
+                            <button
+                              onClick={() =>
+                                setPreviewMap({
+                                  lat: item.latitude_keluar,
+                                  lng: item.longitude_keluar,
+                                })
+                              }
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <MapPin size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
 
@@ -557,13 +492,10 @@ export default function History() {
 
                       {/* KETERANGAN */}
                       <td className="px-5 py-4 text-center">
-                        <span
-                          className={`text-sm font-semibold ${cfg.text}`}
-                        >
+                        <span className={`text-sm font-semibold ${cfg.text}`}>
                           {item.keterangan || "-"}
                         </span>
                       </td>
-
                     </tr>
                   );
                 })
@@ -572,7 +504,8 @@ export default function History() {
           </table>
 
           {/* PAGINATION */}
-          <div className="
+          <div
+            className="
             flex
             flex-col
             lg:flex-row
@@ -582,22 +515,17 @@ export default function History() {
             p-5
             border-t
             border-gray-100
-          ">
-
+          "
+          >
             <div className="text-sm text-gray-500 font-semibold">
-
               Menampilkan {paginatedHistory.length} dari{" "}
               {filteredHistory.length} data
-
             </div>
 
             <div className="flex items-center gap-2">
-
               <button
                 disabled={currentPage === 1}
-                onClick={() =>
-                  setCurrentPage((prev) => prev - 1)
-                }
+                onClick={() => setCurrentPage((prev) => prev - 1)}
                 className="
                   px-4
                   py-2
@@ -613,7 +541,8 @@ export default function History() {
                 Prev
               </button>
 
-              <div className="
+              <div
+                className="
                 px-4
                 py-2
                 rounded-xl
@@ -621,18 +550,14 @@ export default function History() {
                 text-white
                 text-sm
                 font-bold
-              ">
+              "
+              >
                 {currentPage} / {totalPages || 1}
               </div>
 
               <button
-                disabled={
-                  currentPage === totalPages ||
-                  totalPages === 0
-                }
-                onClick={() =>
-                  setCurrentPage((prev) => prev + 1)
-                }
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
                 className="
                   px-4
                   py-2
@@ -647,7 +572,6 @@ export default function History() {
               >
                 Next
               </button>
-
             </div>
           </div>
         </div>
@@ -655,9 +579,7 @@ export default function History() {
         {/* PREVIEW FOTO */}
         {previewPhoto && (
           <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6">
-
             <div className="bg-white rounded-3xl p-5 max-w-3xl w-full relative">
-
               <button
                 onClick={() => setPreviewPhoto(null)}
                 className="absolute top-4 right-4 bg-white rounded-full p-2 shadow"
@@ -677,9 +599,7 @@ export default function History() {
         {/* PREVIEW MAP */}
         {previewMap && (
           <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6">
-
             <div className="bg-white rounded-3xl p-5 max-w-4xl w-full relative">
-
               <button
                 onClick={() => setPreviewMap(null)}
                 className="absolute top-4 right-4 bg-white rounded-full p-2 shadow z-10"
@@ -693,11 +613,9 @@ export default function History() {
                 className="w-full h-[500px] rounded-2xl"
                 loading="lazy"
               />
-
             </div>
           </div>
         )}
-
       </div>
     </Layout>
   );
