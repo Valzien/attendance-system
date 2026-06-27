@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pastel-blue: #a7c7e7;
+  --color-pastel-pink: #f1c0e8;
+  --color-pastel-green: #b5ead7;
+  --color-pastel-yellow: #ffdac1;
+  --color-pastel-purple: #cbaacb;
+}
+
+@layer base {
+  body {
+    background-color: white;
+    color: #1f2937;
+  }
+}

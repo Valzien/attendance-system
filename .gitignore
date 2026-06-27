@@ -1,0 +1,38 @@
+# =========================
+# FRONTEND
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.DS_Store
+
+# =========================
+# BACKEND
+# =========================
+backend/__pycache__/
+backend/**/*.pyc
+backend/.env
+backend/venv/
+backend/.venv/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS
+# =========================
+Thumbs.db
+.DS_Store
+
+# =========================
+# LOG
+# =========================
+*.log
+
+AGENTS.md
+API_USAGE_GUIDE.md
+SETUP_GUIDE.md
