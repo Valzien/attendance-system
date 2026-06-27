@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # Untuk development lokal, masih pakai localhost kalau DATABASE_URL belum ada
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "mysql+pymysql://root:@localhost/absen_nepul"
+    "mysql://root:UWnpoQgCIxPlekFaRXpDTZbAbjOThmfP@zephyr.proxy.rlwy.net:44584/railway"
 )
 
 engine = create_engine(
