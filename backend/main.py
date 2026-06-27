@@ -14,7 +14,6 @@ from routes import (
     izin,
     notif,
     student_import,
-    face,
     teacher_import,
     jadwal_import,
 )
@@ -53,7 +52,6 @@ app.include_router(izin.router)
 app.include_router(notif.router)
 app.include_router(student_import.router)
 app.include_router(jadwal_import.router)
-app.include_router(face.router)
 app.include_router(jam_pulang_router)
 
 # Static files
