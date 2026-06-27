@@ -35,6 +35,8 @@ export default function Notifications() {
     "Desember",
   ];
 
+  const API_BASE = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {

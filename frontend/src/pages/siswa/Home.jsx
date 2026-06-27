@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import heroImg from "../../assets/hero.png";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function Home() {
   const [name, setName] = useState("");

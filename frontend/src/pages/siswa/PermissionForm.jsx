@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "./Layout";
 import { Camera } from "lucide-react";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function PermissionForm() {
   const navigate = useNavigate();

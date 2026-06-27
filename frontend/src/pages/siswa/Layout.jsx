@@ -14,6 +14,7 @@ import {
 import { useState, useEffect } from "react";
 import logobanten from "../../assets/images/logobanten.png";
 import logosman from "../../assets/images/logosman.jpg";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const staticNavItems = [
   { to: "/home", title: "Beranda", icon: LayoutDashboard },
