@@ -12,7 +12,6 @@ requests==2.32.3
 numpy
 pandas
 Pillow
-opencv-python-headless
 
 cryptography
 openpyxl
