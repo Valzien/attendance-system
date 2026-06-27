@@ -8,9 +8,12 @@ python-multipart==0.0.6
 python-dotenv==1.0.0
 
 requests==2.32.3
-cryptography==45.0.5
 
-pandas
-openpyxl
 numpy
-pillow
+pandas
+Pillow
+opencv-python-headless
+face-recognition
+
+cryptography
+openpyxl
