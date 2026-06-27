@@ -2,16 +2,15 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Ambil DATABASE_URL dari Environment Variable
-# Untuk development lokal, masih pakai localhost kalau DATABASE_URL belum ada
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "mysql://root:UWnpoQgCIxPlekFaRXpDTZbAbjOThmfP@zephyr.proxy.rlwy.net:44584/railway"
+    "mysql+pymysql://root:UWnpoQgCIxPlekFaRXpDTZbAbjOThmfP@zephyr.proxy.rlwy.net:44584/railway"
 )
 
 engine = create_engine(
     DATABASE_URL,
-    pool_pre_ping=True
+    pool_pre_ping=True,
+    pool_recycle=300
 )
 
 SessionLocal = sessionmaker(
@@ -21,7 +20,6 @@ SessionLocal = sessionmaker(
 )
 
 Base = declarative_base()
-
 
 def get_db():
     db = SessionLocal()
