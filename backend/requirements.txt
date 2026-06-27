@@ -13,7 +13,6 @@ numpy
 pandas
 Pillow
 opencv-python-headless
-face-recognition
 
 cryptography
 openpyxl
